@@ -135,36 +135,65 @@
     <!-- =================================================== -->
     <main id="page-login" class="max-w-md mx-auto p-4 sm:p-6 lg:p-8 mt-10">
         <h1 class="text-3xl font-bold tracking-tight text-gray-900 mb-6 text-center">神秘客登入</h1>
-        <p class="text-gray-600 mb-8 text-center">請使用您註冊並通過審核的 Email 登入。</p>
+        <p class="text-gray-600 mb-8 text-center">請使用您註冊並通過審核的 Email 及密碼登入，並完成雙重驗證。</p>
 
         <form id="login-form" onsubmit="handleLoginSubmit(event)" class="bg-white p-8 rounded-2xl shadow-lg space-y-6">
-            
+
             <!-- 登入錯誤訊息 -->
             <div id="login-error-container" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg" role="alert">
                 <p id="login-error-message"></p>
             </div>
 
-            <!-- Email -->
-            <div>
-                <label for="login-email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                <input type="email" id="login-email" name="login-email" required
-                       class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                       placeholder="example@email.com">
+            <!-- 步驟一：帳號密碼驗證 -->
+            <div id="login-step-one" class="space-y-6">
+                <div>
+                    <label for="login-email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" id="login-email" name="login-email" required
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                           placeholder="example@email.com">
+                </div>
+
+                <div>
+                    <label for="login-password" class="block text-sm font-medium text-gray-700 mb-2">密碼</label>
+                    <input type="password" id="login-password" name="login-password" required
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                           placeholder="請輸入密碼">
+                </div>
+
+                <p class="text-xs text-gray-500">若忘記密碼，請聯繫管理員協助重設。</p>
+            </div>
+
+            <!-- 步驟二：雙重驗證碼 -->
+            <div id="login-step-two" class="hidden space-y-4">
+                <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+                    <p id="login-step-two-message" class="text-sm"></p>
+                </div>
+                <div>
+                    <label for="login-otp" class="block text-sm font-medium text-gray-700 mb-2">驗證碼</label>
+                    <input type="text" id="login-otp" name="login-otp" inputmode="numeric" pattern="[0-9]*" maxlength="6" minlength="6" required
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                           placeholder="請輸入 6 位數驗證碼">
+                    <p id="two-factor-hint" class="text-xs text-gray-500 mt-2"></p>
+                </div>
             </div>
 
             <!-- 提交按鈕 -->
-            <div class="pt-4">
+            <div class="pt-4 space-y-3">
                 <button type="submit" id="login-submit-button" class="w-full skoda-button font-bold py-3 px-5 rounded-lg flex items-center justify-center text-lg">
                     <svg id="login-submit-loader" class="hidden animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    <span id="login-submit-text">登入</span>
+                    <span id="login-submit-text">下一步</span>
+                </button>
+
+                <button type="button" id="login-back-button" class="hidden w-full skoda-button-outline font-medium py-3 px-5 rounded-lg">
+                    返回重新輸入帳號密碼
                 </button>
             </div>
-            
+
             <p class="text-sm text-center text-gray-600">
-                還沒有帳號？ 
+                還沒有帳號？
                 <a onclick="showPage('register')" class="skoda-link">
                     點此立即註冊
                 </a>
@@ -246,6 +275,23 @@
                 <input type="email" id="reg-email" name="reg-email" required
                        class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                        placeholder="example@email.com">
+            </div>
+
+            <!-- 密碼 -->
+            <div>
+                <label for="reg-password" class="block text-sm font-medium text-gray-700 mb-2">設定登入密碼</label>
+                <input type="password" id="reg-password" name="reg-password" required minlength="6"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                       placeholder="請輸入至少 6 碼密碼">
+                <p class="text-xs text-gray-500 mt-2">建議使用英數混合密碼，後續登入需配合雙重驗證。</p>
+            </div>
+
+            <!-- 確認密碼 -->
+            <div>
+                <label for="reg-password-confirm" class="block text-sm font-medium text-gray-700 mb-2">確認密碼</label>
+                <input type="password" id="reg-password-confirm" name="reg-password-confirm" required minlength="6"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                       placeholder="請再輸入一次密碼">
             </div>
 
             <!-- 電話 -->
@@ -396,14 +442,27 @@
         // [開發者註記] 模擬使用者登入狀態
         let CURRENT_USER = {
             email: null,
-            name: null
+            name: null,
+            role: null
         };
-        
-        // [開發者註記] 模擬已核准的使用者
-        const MOCK_APPROVED_USER = {
-            email: "approved@skoda.tw",
-            name: "王大明"
-        };
+
+        // [開發者註記] 模擬已核准的使用者（含雙重驗證碼）
+        const MOCK_APPROVED_USERS = [
+            {
+                email: "approved@skoda.tw",
+                name: "王大明",
+                password: "mission789",
+                twoFactorCode: "246810",
+                role: "member"
+            },
+            {
+                email: "vv123@gmail.com",
+                name: "管理員測試",
+                password: "1234567",
+                twoFactorCode: "135790",
+                role: "admin"
+            }
+        ];
 
 
         // =============================================
@@ -430,7 +489,15 @@
         const loginSubmitButton = document.getElementById('login-submit-button');
         const loginSubmitLoader = document.getElementById('login-submit-loader');
         const loginSubmitText = document.getElementById('login-submit-text');
-        
+        const loginEmailInput = document.getElementById('login-email');
+        const loginPasswordInput = document.getElementById('login-password');
+        const loginOtpInput = document.getElementById('login-otp');
+        const loginStepOneContainer = document.getElementById('login-step-one');
+        const loginStepTwoContainer = document.getElementById('login-step-two');
+        const loginStepTwoMessage = document.getElementById('login-step-two-message');
+        const twoFactorHint = document.getElementById('two-factor-hint');
+        const loginBackButton = document.getElementById('login-back-button');
+
         // 預約頁面
         const loadingContainer = document.getElementById('loading-container');
         const errorContainer = document.getElementById('error-container');
@@ -451,6 +518,10 @@
         const regSubmitButton = document.getElementById('register-submit-button');
         const regSubmitLoader = document.getElementById('register-submit-loader');
         const regSubmitText = document.getElementById('register-submit-text');
+        const regNameInput = document.getElementById('reg-name');
+        const regEmailInput = document.getElementById('reg-email');
+        const regPasswordInput = document.getElementById('reg-password');
+        const regPasswordConfirmInput = document.getElementById('reg-password-confirm');
 
         // 訊息提示框
         const messageBox = document.getElementById('message-box');
@@ -458,8 +529,10 @@
         const messageText = document.getElementById('message-text');
         const iconSuccess = document.getElementById('message-icon-success');
         const iconError = document.getElementById('message-icon-error');
-        
+
         let messageTimer;
+        let loginStep = 1;
+        let pendingUser = null;
 
         // =============================================
         // 核心流程
@@ -475,42 +548,79 @@
         // 2. [新] 處理登入 - [模擬模式]
         async function handleLoginSubmit(event) {
             event.preventDefault();
-            const email = document.getElementById('login-email').value;
-            
-            showLoginLoading(true);
-            loginErrorContainer.classList.add('hidden'); // 隱藏舊錯誤
-            
-            // 模擬 1 秒鐘的 API 呼叫
-            setTimeout(() => {
-                // 檢查是否為模擬的 "已核准" 使用者
-                if (email.toLowerCase() === MOCK_APPROVED_USER.email) {
-                    // 登入成功
-                    CURRENT_USER.email = MOCK_APPROVED_USER.email;
-                    CURRENT_USER.name = MOCK_APPROVED_USER.name;
-                    
-                    updateNavUI(true); // 更新導航欄為 "登入後"
-                    showPage('booking'); // 顯示預約頁面
-                    fetchSlots(); // [關鍵] 登入成功後才載入時段
-                    
-                    loginForm.reset();
-                    
-                } else {
-                    // 登入失敗
-                    CURRENT_USER.email = null;
-                    CURRENT_USER.name = null;
-                    loginErrorMessage.textContent = "Email 錯誤或您的帳號尚未通過審核。";
+
+            loginErrorContainer.classList.add('hidden');
+
+            if (loginStep === 1) {
+                const email = loginEmailInput.value.trim().toLowerCase();
+                const password = loginPasswordInput.value;
+
+                if (!email || !password) {
+                    loginErrorMessage.textContent = "請輸入完整的 Email 與密碼。";
                     loginErrorContainer.classList.remove('hidden');
+                    return;
                 }
-                
-                showLoginLoading(false);
-            }, 1000);
+
+                showLoginLoading(true);
+
+                setTimeout(() => {
+                    const matchedUser = MOCK_APPROVED_USERS.find(user => user.email.toLowerCase() === email);
+
+                    if (!matchedUser || matchedUser.password !== password) {
+                        showLoginLoading(false);
+                        loginErrorMessage.textContent = "帳號或密碼錯誤，或尚未通過審核。";
+                        loginErrorContainer.classList.remove('hidden');
+                        pendingUser = null;
+                        return;
+                    }
+
+                    pendingUser = matchedUser;
+                    setLoginStep(2);
+                    loginStepTwoMessage.textContent = `驗證碼已傳送至 ${pendingUser.email}，請於 5 分鐘內輸入 6 位數代碼完成登入。`;
+                    twoFactorHint.textContent = `（測試用驗證碼：${pendingUser.twoFactorCode}）`;
+                    loginOtpInput.value = '';
+                    showLoginLoading(false);
+                    showMessage('success', '帳號密碼驗證成功，請輸入驗證碼完成登入。');
+                }, 1000);
+            } else if (loginStep === 2) {
+                const otp = loginOtpInput.value.trim();
+
+                if (!otp || otp.length !== 6) {
+                    loginErrorMessage.textContent = "請輸入 6 位數驗證碼。";
+                    loginErrorContainer.classList.remove('hidden');
+                    return;
+                }
+
+                showLoginLoading(true);
+
+                setTimeout(() => {
+                    if (pendingUser && otp === pendingUser.twoFactorCode) {
+                        CURRENT_USER.email = pendingUser.email;
+                        CURRENT_USER.name = pendingUser.name;
+                        CURRENT_USER.role = pendingUser.role;
+
+                        showLoginLoading(false);
+                        resetLoginForm();
+                        updateNavUI(true);
+                        showPage('booking');
+                        fetchSlots();
+                        showMessage('success', '登入成功！');
+                    } else {
+                        showLoginLoading(false);
+                        loginErrorMessage.textContent = "驗證碼錯誤，請再試一次。";
+                        loginErrorContainer.classList.remove('hidden');
+                    }
+                }, 1000);
+            }
         }
         
         // 3. [新] 處理登出
         function handleLogout() {
             CURRENT_USER.email = null;
             CURRENT_USER.name = null;
+            CURRENT_USER.role = null;
             updateNavUI(false); // 更新導航欄為 "登入前"
+            resetLoginForm();
             showPage('login'); // 顯示登入頁面
             slotsContainer.innerHTML = ''; // 清空時段
         }
@@ -589,22 +699,37 @@
         // 7. 提交註冊表單 - [模擬模式]
         async function handleRegistrationSubmit(event) {
             event.preventDefault();
-            
-            if (!document.getElementById('reg-name').value || !document.getElementById('reg-email').value) {
-                showMessage('error', '姓名和 Email 為必填項。');
+
+            const name = regNameInput.value.trim();
+            const email = regEmailInput.value.trim();
+            const password = regPasswordInput.value;
+            const passwordConfirm = regPasswordConfirmInput.value;
+
+            if (!name || !email || !password || !passwordConfirm) {
+                showMessage('error', '請完整填寫所有必填欄位。');
                 return;
             }
-            
+
+            if (password.length < 6) {
+                showMessage('error', '密碼需至少 6 碼，請重新設定。');
+                return;
+            }
+
+            if (password !== passwordConfirm) {
+                showMessage('error', '兩次輸入的密碼不一致，請再確認。');
+                return;
+            }
+
             showRegisterLoading(true);
-            
+
             setTimeout(() => {
                 showRegisterLoading(false);
-                showMessage('success', '模擬註冊成功！請等待管理員審核。');
-                registrationForm.reset(); 
-                
+                showMessage('success', '模擬註冊成功！請等待管理員審核與啟用雙重驗證。');
+                registrationForm.reset();
+
                 // [關鍵] 註冊成功後，跳回「登入頁面」
                 showPage('login');
-                
+
             }, 1500);
         }
 
@@ -618,6 +743,7 @@
             navLinkRegisterPage.addEventListener('click', () => showPage('register'));
             navLinkBookingPage.addEventListener('click', () => showPage('booking'));
             logoutButton.addEventListener('click', handleLogout);
+            loginBackButton.addEventListener('click', () => resetLoginForm({ preserveInputs: true }));
         }
 
         // [新] 顯示指定頁面
@@ -634,6 +760,7 @@
 
             // 顯示指定頁面
             if (pageName === 'login') {
+                resetLoginForm();
                 pageLogin.classList.remove('hidden');
                 navLinkLoginPage.classList.add('active');
             } else if (pageName === 'register') {
@@ -646,6 +773,7 @@
                     navLinkBookingPage.classList.add('active');
                 } else {
                     // 未登入，強制導回登入頁
+                    resetLoginForm();
                     pageLogin.classList.remove('hidden');
                     navLinkLoginPage.classList.add('active');
                 }
@@ -658,7 +786,8 @@
                 navLoggedOut.classList.add('hidden');
                 navLoggedIn.classList.remove('hidden');
                 navLoggedIn.classList.add('flex');
-                welcomeMessage.textContent = `歡迎, ${CURRENT_USER.name}`;
+                const roleLabel = CURRENT_USER.role === 'admin' ? '（管理員）' : '';
+                welcomeMessage.textContent = `歡迎, ${CURRENT_USER.name}${roleLabel}`;
             } else {
                 navLoggedOut.classList.remove('hidden');
                 navLoggedIn.classList.add('hidden');
@@ -666,7 +795,47 @@
                 welcomeMessage.textContent = '';
             }
         }
-        
+
+        function resetLoginForm(options = {}) {
+            const { preserveInputs = false } = options;
+            pendingUser = null;
+            loginErrorContainer.classList.add('hidden');
+
+            if (!preserveInputs) {
+                loginForm.reset();
+            } else {
+                loginOtpInput.value = '';
+            }
+
+            setLoginStep(1);
+            showLoginLoading(false);
+        }
+
+        function setLoginStep(step) {
+            loginStep = step;
+
+            if (loginStep === 1) {
+                loginStepOneContainer.classList.remove('hidden');
+                loginStepTwoContainer.classList.add('hidden');
+                loginEmailInput.removeAttribute('disabled');
+                loginPasswordInput.removeAttribute('disabled');
+                loginBackButton.classList.add('hidden');
+                loginBackButton.classList.remove('block');
+                loginOtpInput.value = '';
+                twoFactorHint.textContent = '';
+                loginStepTwoMessage.textContent = '';
+            } else {
+                loginStepOneContainer.classList.add('hidden');
+                loginStepTwoContainer.classList.remove('hidden');
+                loginEmailInput.setAttribute('disabled', 'true');
+                loginPasswordInput.setAttribute('disabled', 'true');
+                loginBackButton.classList.remove('hidden');
+                loginBackButton.classList.add('block');
+            }
+
+            loginSubmitText.textContent = loginStep === 1 ? '下一步' : '確認登入';
+        }
+
         // 顯示/隱藏 全頁載入中
         function showLoading(isLoading) {
             if (isLoading) {
@@ -721,11 +890,11 @@
             if (isLoading) {
                 loginSubmitButton.disabled = true;
                 loginSubmitLoader.classList.remove('hidden');
-                loginSubmitText.textContent = "登入中...";
+                loginSubmitText.textContent = "驗證中...";
             } else {
                 loginSubmitButton.disabled = false;
                 loginSubmitLoader.classList.add('hidden');
-                loginSubmitText.textContent = "登入";
+                loginSubmitText.textContent = loginStep === 1 ? "下一步" : "確認登入";
             }
         }
         
