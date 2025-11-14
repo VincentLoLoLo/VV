@@ -41,4 +41,23 @@
 
 ---
 
+## Codex 与 GitHub 自動化流程
+
+此专案已設置 GitHub Actions 自動化流程，不需要手動粗理 PR 的合併和删除。
+
+### 工作流程
+
+1. 在 Codex 中修改程式碼
+2. 點擊「建立 PR」按鈕
+3. GitHub Actions 會自動:
+   - 検測以 `codex-` 開頫的 PR
+   - 自動合併到 main 分支
+   - 自動刪除已合併的分支
+
+### 流程配置檔
+
+- `.github/workflows/auto-merge.yml` - 自動合併流程
+
+> ✅ 你的 PR 會被自動合併！你只需要專注於程式碼的修改。
+
 **上次部署** 2025-11-15 (GitHub Pages)
