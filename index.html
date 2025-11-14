@@ -93,9 +93,24 @@
             color: #000;
         }
 
+        .brand-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: clamp(1rem, 3vw, 1.5rem);
+            align-items: stretch;
+        }
+
         .brand-card {
             cursor: pointer;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+
+        .brand-description {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .brand-card.selected {
@@ -270,13 +285,13 @@
     <!-- 頁面 2: 品牌首頁 (登入後預設顯示) -->
     <!-- =================================================== -->
     <main id="page-brand-home" class="hidden max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
-        <div class="grid lg:grid-cols-3 gap-6 lg:gap-8">
-            <section class="lg:col-span-1 space-y-4">
+        <div class="grid lg:grid-cols-5 gap-6 lg:gap-8">
+            <section class="lg:col-span-3 space-y-4">
                 <div>
                     <h1 class="text-3xl font-bold tracking-tight text-gray-900">選擇您要執行的品牌</h1>
                     <p class="text-gray-600 mt-2">登入後先挑選品牌，即可在同一頁檢視該品牌的任務儀表板與統計摘要。</p>
                 </div>
-                <div id="brand-grid" class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"></div>
+                <div id="brand-grid" class="brand-grid"></div>
             </section>
             <section class="lg:col-span-2 space-y-4">
                 <div id="brand-dashboard-empty" class="bg-white rounded-2xl shadow-lg border border-dashed border-gray-300 p-10 flex flex-col items-center justify-center text-center text-gray-500">
@@ -302,20 +317,22 @@
         </div>
 
         <template id="brand-card-template">
-            <div class="brand-card bg-white rounded-2xl shadow-lg p-6 flex flex-col justify-between border border-gray-100 transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl">
-                <div class="brand-card-accent"></div>
-                <div class="flex items-start justify-between gap-4">
-                    <div>
-                        <h2 class="text-2xl font-bold text-gray-900 brand-name"></h2>
-                        <p class="text-sm text-gray-500 mt-1 brand-origin"></p>
+            <div class="brand-card bg-white rounded-2xl shadow-lg p-6 flex flex-col border border-gray-100 transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl">
+                <div class="flex flex-col flex-1">
+                    <div class="brand-card-accent"></div>
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900 brand-name"></h2>
+                            <p class="text-sm text-gray-500 mt-1 brand-origin"></p>
+                        </div>
+                        <span class="brand-badge"></span>
                     </div>
-                    <span class="brand-badge"></span>
-                </div>
-                <p class="text-gray-600 mt-4 brand-description"></p>
-                <div class="mt-6 flex flex-col gap-2 text-sm text-gray-500">
-                    <span class="brand-availability"></span>
-                    <span class="brand-project-count"></span>
-                    <span class="brand-next-slot"></span>
+                    <p class="text-gray-600 mt-4 brand-description"></p>
+                    <div class="mt-6 flex flex-col gap-2 text-sm text-gray-500">
+                        <span class="brand-availability"></span>
+                        <span class="brand-project-count"></span>
+                        <span class="brand-next-slot"></span>
+                    </div>
                 </div>
                 <button type="button" class="mt-6 accent-button font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center">
                     查看品牌儀表板
