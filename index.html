@@ -1319,6 +1319,10 @@
                 showPage('login');
                 return;
             }
+            if (CURRENT_USER.role === 'admin') {
+                showAdminDashboard();
+                return;
+            }
 
             SELECTED_PROJECT = null;
             SELECTED_DEALER = null;
