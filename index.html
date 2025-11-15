@@ -337,6 +337,15 @@
                         <span class="experience-remaining inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"></span>
                         <p class="experience-next text-xs text-gray-400 mt-2"></p>
                     </div>
+                    <span class="remaining-badge inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"></span>
+                </div>
+                <div class="mt-4 space-y-2">
+                    <p class="text-sm text-gray-600 next-available"></p>
+                    <p class="text-xs text-gray-500 total-summary"></p>
+                    <div class="project-summary flex flex-wrap gap-2"></div>
+                </div>
+                <div class="mt-6 flex items-center justify-end">
+                    <button type="button" class="dealer-detail-button accent-button font-semibold py-2 px-4 rounded-lg">查看詳細場次</button>
                 </div>
             </button>
         </template>
@@ -1486,6 +1495,18 @@
         document.addEventListener('DOMContentLoaded', () => {
             // [開發者註記] 預設顯示登入頁面
             renderBrandCards();
+            if (brandRegionFilter) {
+                brandRegionFilter.addEventListener('change', handleBrandFiltersChanged);
+            }
+            if (brandMonthFilter) {
+                brandMonthFilter.addEventListener('change', handleBrandFiltersChanged);
+            }
+            if (brandSearchInput) {
+                brandSearchInput.addEventListener('input', () => {
+                    activeBrandFilters.search = brandSearchInput.value || '';
+                    renderBrandAvailabilityList();
+                });
+            }
             showPage('login');
             setupNavigation();
             setLoginStep(1);
@@ -1598,6 +1619,13 @@
                 showPage('login');
                 return;
             }
+            if (CURRENT_USER.role === 'admin') {
+                showAdminDashboard();
+                return;
+            }
+
+            SELECTED_PROJECT = null;
+            SELECTED_DEALER = null;
 
             if (typeof targetBrand === 'string') {
                 SELECTED_BRAND = targetBrand;
@@ -1856,6 +1884,14 @@
                 row.appendChild(brandCell);
                 regionOverviewBody.appendChild(row);
             });
+
+            if (regionOverviewEmpty) {
+                if (hasData) {
+                    regionOverviewEmpty.classList.add('hidden');
+                } else {
+                    regionOverviewEmpty.classList.remove('hidden');
+                }
+            }
         }
 
         function hideBrandSelection() {
@@ -1890,6 +1926,12 @@
         function openBrandForBooking(brandName) {
             if (!CURRENT_USER.email) {
                 showPage('login');
+                return;
+            }
+
+            const brandInfo = BRAND_DATA.find(brand => brand.name === brandName);
+            if (!brandInfo) {
+                showMessage('error', '找不到品牌資訊，請重新整理頁面。');
                 return;
             }
 
@@ -2547,6 +2589,56 @@
             }
             logoutButton.addEventListener('click', handleLogout);
             loginBackButton.addEventListener('click', () => resetLoginForm({ preserveInputs: true }));
+            if (brandBackButton) {
+                brandBackButton.addEventListener('click', () => clearBrandSelection());
+            }
+        }
+
+        function renderBreadcrumb(container, crumbs = []) {
+            if (!container) {
+                return;
+            }
+
+            container.innerHTML = '';
+
+            if (!Array.isArray(crumbs) || crumbs.length === 0) {
+                container.classList.add('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+
+            crumbs.forEach((crumb, index) => {
+                if (index > 0) {
+                    const separator = document.createElement('span');
+                    separator.className = 'text-gray-300';
+                    separator.textContent = '/';
+                    container.appendChild(separator);
+                }
+
+                const hasAction = typeof crumb.action === 'function';
+                let element;
+
+                if (hasAction) {
+                    element = document.createElement('button');
+                    element.type = 'button';
+                    let className = 'transition-colors text-emerald-600 hover:text-emerald-700';
+                    className += crumb.isCurrent ? ' font-semibold' : ' font-medium';
+                    element.className = className;
+                    element.addEventListener('click', crumb.action);
+                } else {
+                    element = document.createElement('span');
+                    element.className = crumb.isCurrent ? 'text-gray-700 font-semibold' : 'text-gray-500';
+                }
+
+                element.textContent = crumb.label || '';
+
+                if (crumb.isCurrent) {
+                    element.setAttribute('aria-current', 'page');
+                }
+
+                container.appendChild(element);
+            });
         }
 
         function renderBreadcrumb(container, crumbs = []) {
