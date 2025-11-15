@@ -1304,6 +1304,10 @@
                 showPage('login');
                 return;
             }
+            if (CURRENT_USER.role === 'admin') {
+                showAdminDashboard();
+                return;
+            }
 
             bookingBreadcrumb.textContent = '';
             bookingTitle.textContent = '可預約的時段';
