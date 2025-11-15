@@ -276,54 +276,39 @@
             </aside>
 
             <div class="space-y-6">
-                <div id="brand-selection-empty" class="bg-white rounded-3xl border border-dashed border-gray-200 p-10 text-center text-gray-500">
-                    <p class="text-base font-medium text-gray-600">請從左側選擇品牌，以查看任務與可預約時段。</p>
+                <div id="brand-selection-empty" class="bg-white rounded-3xl border border-dashed border-gray-200 p-10 text-gray-500">
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <h2 class="text-2xl font-semibold text-gray-900">依地區查看剩餘名額</h2>
+                            <p class="text-sm text-gray-500">先挑選想前往的區域，了解各品牌目前還有哪些空檔。</p>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">地區</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">品牌</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">剩餘可預約場次</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="region-overview-body" class="bg-white divide-y divide-gray-100"></tbody>
+                            </table>
+                        </div>
+                        <p id="region-overview-empty" class="hidden text-sm text-gray-500 text-center">目前所有場次皆已被預約。</p>
+                    </div>
                 </div>
 
-                <div id="brand-selection-panel" class="hidden space-y-6">
-                    <div id="brand-selection-card" class="bg-white rounded-3xl shadow-lg border border-gray-100 border-t-4">
-                        <div class="p-6 sm:p-8 space-y-6">
-                            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-                                <div class="space-y-1">
-                                    <p class="text-sm text-gray-500" id="brand-selection-breadcrumb"></p>
-                                    <h2 id="brand-selection-title" class="text-3xl font-bold tracking-tight text-gray-900"></h2>
-                                    <p id="brand-selection-meta" class="text-sm text-gray-500"></p>
-                                </div>
-                                <button type="button" class="skoda-button-outline font-medium py-2.5 px-5 rounded-lg self-start" onclick="clearBrandSelection()">
+                <div id="brand-selection-panel" class="hidden">
+                    <div class="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 sm:p-8 space-y-6">
+                        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                            <nav id="brand-selection-breadcrumb" class="flex flex-wrap items-center gap-2 text-sm text-gray-500"></nav>
+                            <div class="flex items-center gap-2">
+                                <button type="button" id="brand-back-button" class="skoda-button-outline font-medium py-2.5 px-5 rounded-lg">
                                     返回品牌清單
                                 </button>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="bg-gray-50 rounded-2xl p-4">
-                                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">剩餘任務時段</p>
-                                    <p id="brand-metric-remaining" class="text-2xl font-bold text-gray-900 mt-2">0</p>
-                                </div>
-                                <div class="bg-gray-50 rounded-2xl p-4">
-                                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">涵蓋縣市</p>
-                                    <p id="brand-metric-cities" class="text-2xl font-bold text-gray-900 mt-2">0</p>
-                                </div>
-                                <div class="bg-gray-50 rounded-2xl p-4">
-                                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">最近可預約</p>
-                                    <p id="brand-metric-next" class="text-lg font-semibold text-gray-900 mt-2">尚未開放</p>
-                                </div>
-                            </div>
                         </div>
-                    </div>
-
-                    <div class="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 sm:p-8 space-y-6">
-                        <div class="flex flex-col gap-2">
-                            <h3 class="text-xl font-semibold text-gray-900">任務選擇</h3>
-                            <p class="text-sm text-gray-500">僅顯示專案名稱與剩餘名額。</p>
-                        </div>
-                        <div id="brand-projects" class="space-y-4"></div>
-                        <p id="brand-projects-empty" class="hidden text-sm text-gray-500 text-center">目前此品牌沒有可預約的任務。</p>
-                    </div>
-
-                    <div class="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 sm:p-8 space-y-6">
-                        <div class="flex flex-col gap-2">
-                            <h3 class="text-xl font-semibold text-gray-900">據點剩餘名額</h3>
-                            <p class="text-sm text-gray-500">依縣市、月份與關鍵字篩選，快速掌握哪裡還可以跑。</p>
-                        </div>
+                        <div id="brand-selection-summary" class="flex flex-wrap gap-3 text-sm text-gray-600"></div>
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                             <div class="flex flex-col gap-2">
                                 <label for="brand-region-filter" class="text-xs font-semibold text-gray-500 uppercase tracking-wide">依縣市篩選</label>
@@ -354,24 +339,11 @@
                 </div>
             </button>
         </template>
-
-        <template id="project-card-template">
-            <div class="project-card bg-white rounded-2xl shadow-lg border border-gray-100 p-5 flex items-center justify-between">
-                <div class="space-y-1">
-                    <h3 class="text-lg font-semibold text-gray-900 project-title"></h3>
-                    <p class="text-sm text-gray-500 project-remaining"></p>
-                </div>
-                <button type="button" class="accent-button font-semibold py-2 px-4 rounded-lg">
-                    開始預約
-                </button>
-            </div>
-        </template>
-
         <template id="location-card-template">
-            <div class="location-card bg-white rounded-2xl shadow-lg border border-gray-100 p-6 flex flex-col h-full">
+            <div class="location-card bg-white rounded-2xl shadow-lg border border-gray-100 p-6 flex flex-col h-full transition-all duration-200 hover:shadow-xl">
                 <div class="flex items-start justify-between gap-4">
-                    <div>
-                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide location-city"></p>
+                    <div class="space-y-1">
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide location-region"></p>
                         <h4 class="text-lg font-bold text-gray-900 dealer-name"></h4>
                         <p class="text-sm text-gray-500 dealer-address"></p>
                     </div>
@@ -380,8 +352,11 @@
                 <div class="mt-4 space-y-2">
                     <p class="text-sm text-gray-600 next-available"></p>
                     <p class="text-xs text-gray-500 total-summary"></p>
+                    <div class="project-summary flex flex-wrap gap-2"></div>
                 </div>
-                <div class="mt-4 flex flex-wrap gap-2 project-actions"></div>
+                <div class="mt-6 flex items-center justify-end">
+                    <button type="button" class="dealer-detail-button accent-button font-semibold py-2 px-4 rounded-lg">查看詳細場次</button>
+                </div>
             </div>
         </template>
     </main>
@@ -561,7 +536,12 @@
     <main id="page-booking" class="hidden max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
 
         <!-- 頁面標題 -->
-        <p class="text-sm text-gray-500 mb-2" id="booking-breadcrumb"></p>
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4">
+            <nav id="booking-breadcrumb" class="flex flex-wrap items-center gap-2 text-sm text-gray-500"></nav>
+            <button type="button" id="booking-back-button" class="hidden skoda-button-outline font-medium py-2 px-4 rounded-lg">
+                返回上一頁
+            </button>
+        </div>
         <h1 id="booking-title" class="text-3xl font-bold tracking-tight text-gray-900 mb-2">可預約的時段</h1>
         <p id="booking-intro" class="text-gray-600"></p>
         <div id="booking-goal" class="mb-6 bg-white border border-gray-100 rounded-2xl p-5 shadow-sm hidden">
@@ -845,6 +825,42 @@
             return match ? match[0] : '未分類';
         }
 
+        const CITY_REGION_MAP = {
+            '台北市': '北部',
+            '新北市': '北部',
+            '桃園市': '北部',
+            '基隆市': '北部',
+            '新竹市': '北部',
+            '新竹縣': '北部',
+            '宜蘭縣': '東部',
+            '花蓮縣': '東部',
+            '台東縣': '東部',
+            '台中市': '中部',
+            '彰化市': '中部',
+            '彰化縣': '中部',
+            '苗栗縣': '中部',
+            '南投縣': '中部',
+            '雲林縣': '中部',
+            '嘉義市': '南部',
+            '嘉義縣': '南部',
+            '台南市': '南部',
+            '高雄市': '南部',
+            '屏東縣': '南部',
+            '屏東市': '南部'
+        };
+
+        function mapCityToRegion(city) {
+            if (!city || city === '未分類') {
+                return '未分類';
+            }
+            const normalized = city.replace(/\s+/g, '');
+            return CITY_REGION_MAP[normalized] || '未分類';
+        }
+
+        function buildDealerKey(brandName, dealer, location) {
+            return `${brandName || ''}||${dealer || ''}||${location || ''}`;
+        }
+
         const BRAND_DATA = [
             { name: 'MAZDA', origin: '日本 / 台灣馬自達', description: '聚焦在以人為本的經典駕馭體驗與客製化賞車流程。', accent: '#BF1E2E' },
             { name: 'Škoda', origin: '捷克 / 歐洲進口', description: '強調 Simply Clever 的驚喜細節與全方位的家庭用車情境。', accent: '#0E3B33' },
@@ -1033,6 +1049,7 @@
 
         let SELECTED_BRAND = null;
         let SELECTED_PROJECT = null;
+        let SELECTED_DEALER = null;
         let ADMIN_SELECTED_BRAND = null;
         let activeBrandFilters = { region: 'all', month: 'all', search: '' };
 
@@ -1081,16 +1098,11 @@
         const brandListEmpty = document.getElementById('brand-list-empty');
         const brandSelectionEmpty = document.getElementById('brand-selection-empty');
         const brandSelectionPanel = document.getElementById('brand-selection-panel');
-        const brandSelectionCard = document.getElementById('brand-selection-card');
         const brandSelectionBreadcrumb = document.getElementById('brand-selection-breadcrumb');
-        const brandSelectionTitle = document.getElementById('brand-selection-title');
-        const brandSelectionMeta = document.getElementById('brand-selection-meta');
-        const brandMetricRemaining = document.getElementById('brand-metric-remaining');
-        const brandMetricCities = document.getElementById('brand-metric-cities');
-        const brandMetricNext = document.getElementById('brand-metric-next');
-        const brandProjectsContainer = document.getElementById('brand-projects');
-        const brandProjectsEmpty = document.getElementById('brand-projects-empty');
-        const projectCardTemplate = document.getElementById('project-card-template');
+        const brandSelectionSummary = document.getElementById('brand-selection-summary');
+        const brandBackButton = document.getElementById('brand-back-button');
+        const regionOverviewBody = document.getElementById('region-overview-body');
+        const regionOverviewEmpty = document.getElementById('region-overview-empty');
         const brandRegionFilter = document.getElementById('brand-region-filter');
         const brandMonthFilter = document.getElementById('brand-month-filter');
         const brandSearchInput = document.getElementById('brand-search-input');
@@ -1100,6 +1112,7 @@
 
         // 預約頁面標頭
         const bookingBreadcrumb = document.getElementById('booking-breadcrumb');
+        const bookingBackButton = document.getElementById('booking-back-button');
         const bookingTitle = document.getElementById('booking-title');
         const bookingIntro = document.getElementById('booking-intro');
         const bookingGoal = document.getElementById('booking-goal');
@@ -1288,6 +1301,7 @@
             CURRENT_USER.role = null;
             SELECTED_BRAND = null;
             SELECTED_PROJECT = null;
+            SELECTED_DEALER = null;
             ADMIN_SELECTED_BRAND = null;
             activeBrandFilters = { region: 'all', month: 'all', search: '' };
             hideBrandSelection();
@@ -1296,6 +1310,7 @@
             resetLoginForm();
             showPage('login'); // 顯示登入頁面
             slotsContainer.innerHTML = ''; // 清空時段
+            renderRegionOverview();
             refreshAdminDashboardIfVisible();
         }
 
@@ -1309,7 +1324,10 @@
                 return;
             }
 
-            bookingBreadcrumb.textContent = '';
+            SELECTED_PROJECT = null;
+            SELECTED_DEALER = null;
+
+            renderBreadcrumb(bookingBreadcrumb, []);
             bookingTitle.textContent = '可預約的時段';
             bookingIntro.textContent = '';
             bookingGoal.classList.add('hidden');
@@ -1317,7 +1335,6 @@
 
             showPage('brand-home');
 
-            SELECTED_PROJECT = null;
             renderBrandCards();
 
             if (SELECTED_BRAND) {
@@ -1397,34 +1414,94 @@
             }
         }
 
+        function renderRegionOverview() {
+            if (!regionOverviewBody) {
+                return;
+            }
+
+            const summaryMap = new Map();
+            const slots = MOCK_SLOTS_DATA.slots || [];
+
+            slots.forEach(slot => {
+                const city = detectRegionFromSlot(slot);
+                const region = mapCityToRegion(city);
+                if (!summaryMap.has(region)) {
+                    summaryMap.set(region, new Map());
+                }
+                const brandMap = summaryMap.get(region);
+                const brandName = slot.brand || '其他';
+                brandMap.set(brandName, (brandMap.get(brandName) || 0) + 1);
+            });
+
+            const regionsOrder = ['北部', '中部', '南部', '東部', '未分類'];
+            regionOverviewBody.innerHTML = '';
+            let hasData = false;
+
+            regionsOrder.forEach(region => {
+                const brandMap = summaryMap.get(region) || new Map();
+                const entries = Array.from(brandMap.entries()).sort((a, b) => {
+                    if (b[1] !== a[1]) {
+                        return b[1] - a[1];
+                    }
+                    return a[0].localeCompare(b[0], 'zh-Hant');
+                });
+
+                const total = entries.reduce((sum, [, count]) => sum + count, 0);
+                if (total > 0) {
+                    hasData = true;
+                }
+
+                const brandSummary = entries.length
+                    ? entries.map(([brand, count]) => `${brand}（${count}）`).join('、')
+                    : '暫無開放';
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-4 py-3 text-sm font-semibold text-gray-700">${region}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600">${brandSummary}</td>
+                    <td class="px-4 py-3 text-sm text-gray-700">${total}</td>
+                `;
+                regionOverviewBody.appendChild(row);
+            });
+
+            if (regionOverviewEmpty) {
+                if (hasData) {
+                    regionOverviewEmpty.classList.add('hidden');
+                } else {
+                    regionOverviewEmpty.classList.remove('hidden');
+                }
+            }
+        }
+
         function hideBrandSelection() {
             if (brandSelectionPanel) {
                 brandSelectionPanel.classList.add('hidden');
             }
-            if (brandSelectionCard) {
-                brandSelectionCard.style.borderTopColor = '#e5e7eb';
+            if (brandSelectionSummary) {
+                brandSelectionSummary.innerHTML = '';
             }
             if (brandSelectionBreadcrumb) {
-                brandSelectionBreadcrumb.textContent = '';
+                renderBreadcrumb(brandSelectionBreadcrumb, []);
             }
-            if (brandSelectionTitle) {
-                brandSelectionTitle.textContent = '';
+            if (brandRegionFilter) {
+                brandRegionFilter.innerHTML = '';
             }
-            if (brandSelectionMeta) {
-                brandSelectionMeta.textContent = '';
+            if (brandMonthFilter) {
+                brandMonthFilter.innerHTML = '';
             }
-            if (brandMetricRemaining) {
-                brandMetricRemaining.textContent = '0';
+            if (brandSearchInput) {
+                brandSearchInput.value = '';
             }
-            if (brandMetricCities) {
-                brandMetricCities.textContent = '0';
+            if (brandAvailabilityList) {
+                brandAvailabilityList.innerHTML = '';
             }
-            if (brandMetricNext) {
-                brandMetricNext.textContent = '尚未開放';
+            if (brandAvailabilityEmpty) {
+                brandAvailabilityEmpty.classList.add('hidden');
             }
             if (brandSelectionEmpty) {
                 brandSelectionEmpty.classList.remove('hidden');
             }
+            renderRegionOverview();
         }
 
         function clearBrandSelection() {
@@ -1435,6 +1512,7 @@
 
             SELECTED_BRAND = null;
             SELECTED_PROJECT = null;
+            SELECTED_DEALER = null;
             activeBrandFilters = { region: 'all', month: 'all', search: '' };
             hideBrandSelection();
             renderBrandCards();
@@ -1454,101 +1532,74 @@
 
             SELECTED_BRAND = brandName;
             SELECTED_PROJECT = null;
+            SELECTED_DEALER = null;
             activeBrandFilters = { region: 'all', month: 'all', search: '' };
 
             const brandSlots = getBrandSlots(brandName);
             renderBrandCards();
             renderBrandSummary(brandInfo, brandSlots);
-            renderBrandProjectsList(brandInfo, brandSlots);
             populateBrandFilters(brandSlots);
             renderBrandAvailabilityList();
         }
 
         function renderBrandSummary(brandInfo, brandSlots) {
-            if (!brandSelectionPanel || !brandSelectionCard) {
+            if (!brandSelectionPanel) {
                 return;
             }
 
-            const accent = brandInfo.accent || '#0E3B33';
             if (brandSelectionEmpty) {
                 brandSelectionEmpty.classList.add('hidden');
             }
             brandSelectionPanel.classList.remove('hidden');
-            brandSelectionCard.style.borderTopColor = accent;
+
             if (brandSelectionBreadcrumb) {
-                brandSelectionBreadcrumb.textContent = `品牌首頁 / ${brandInfo.name}`;
-            }
-            if (brandSelectionTitle) {
-                brandSelectionTitle.textContent = `${brandInfo.name} 任務列表`;
-            }
-
-            const projects = BRAND_PROJECTS[brandInfo.name] || [];
-            const nextSlotLabel = getNextSlotForBrand(brandInfo.name);
-            const citySet = new Set(brandSlots.map(slot => detectRegionFromSlot(slot)).filter(city => city && city !== '未分類'));
-            if (brandSelectionMeta) {
-                brandSelectionMeta.textContent = projects.length
-                    ? `專案 ${projects.length}｜剩餘 ${brandSlots.length}｜縣市 ${citySet.size}`
-                    : '此品牌目前尚未開放任務。';
-            }
-            if (brandMetricRemaining) {
-                brandMetricRemaining.textContent = `${brandSlots.length}`;
-            }
-            if (brandMetricCities) {
-                brandMetricCities.textContent = `${citySet.size}`;
-            }
-            if (brandMetricNext) {
-                brandMetricNext.textContent = nextSlotLabel || '尚未開放';
-            }
-        }
-
-        function renderBrandProjectsList(brandInfo, brandSlots = []) {
-            if (!brandProjectsContainer || !projectCardTemplate) {
-                return;
+                renderBreadcrumb(brandSelectionBreadcrumb, [
+                    {
+                        label: '品牌首頁',
+                        action: () => {
+                            SELECTED_BRAND = null;
+                            SELECTED_DEALER = null;
+                            showBrandHome();
+                        }
+                    },
+                    {
+                        label: brandInfo.name,
+                        action: () => {
+                            SELECTED_BRAND = brandInfo.name;
+                            SELECTED_DEALER = null;
+                            openBrandForBooking(brandInfo.name);
+                        },
+                        isCurrent: true
+                    }
+                ]);
             }
 
-            brandProjectsContainer.innerHTML = '';
-            const projects = BRAND_PROJECTS[brandInfo.name] || [];
+            if (brandSelectionSummary) {
+                const accent = brandInfo.accent || '#0E3B33';
+                const nextSlotLabel = getNextSlotForBrand(brandInfo.name) || '尚未開放';
+                const citySet = new Set(
+                    brandSlots
+                        .map(slot => detectRegionFromSlot(slot))
+                        .filter(city => city && city !== '未分類')
+                );
 
-            if (!projects.length) {
-                if (brandProjectsEmpty) {
-                    brandProjectsEmpty.classList.remove('hidden');
-                }
-                return;
+                brandSelectionSummary.innerHTML = '';
+
+                const badges = [
+                    { label: `剩餘名額 ${brandSlots.length}`, bg: '#ecfdf5', color: accent },
+                    { label: `服務城市 ${citySet.size}`, bg: '#eff6ff', color: '#1d4ed8' },
+                    { label: `最近可預約 ${nextSlotLabel}`, bg: '#fef3c7', color: '#b45309' }
+                ];
+
+                badges.forEach(badge => {
+                    const chip = document.createElement('span');
+                    chip.className = 'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium';
+                    chip.style.backgroundColor = badge.bg;
+                    chip.style.color = badge.color;
+                    chip.textContent = badge.label;
+                    brandSelectionSummary.appendChild(chip);
+                });
             }
-
-            if (brandProjectsEmpty) {
-                brandProjectsEmpty.classList.add('hidden');
-            }
-
-            projects.forEach(project => {
-                const fragment = projectCardTemplate.content.cloneNode(true);
-                const cardRoot = fragment.querySelector('.project-card');
-                const actionButton = fragment.querySelector('button');
-                const titleEl = fragment.querySelector('.project-title');
-                const remainingEl = fragment.querySelector('.project-remaining');
-
-                if (titleEl) {
-                    titleEl.textContent = project.title;
-                }
-
-                const projectSlots = brandSlots.filter(slot => slot.projectId === project.id);
-                if (remainingEl) {
-                    remainingEl.textContent = `剩餘名額：${projectSlots.length}`;
-                }
-
-                const accent = project.brandAccent || brandInfo.accent || '#0E3B33';
-                if (cardRoot) {
-                    cardRoot.style.borderColor = accent;
-                    cardRoot.style.boxShadow = `0 12px 24px -18px ${accent}33`;
-                }
-                if (actionButton) {
-                    actionButton.style.backgroundColor = accent;
-                    actionButton.style.boxShadow = `0 12px 24px -16px ${accent}80`;
-                    actionButton.addEventListener('click', () => openProjectSchedule(brandInfo.name, project.id));
-                }
-
-                brandProjectsContainer.appendChild(fragment);
-            });
         }
 
         function populateBrandFilters(brandSlots) {
@@ -1600,8 +1651,8 @@
             const dealerMap = new Map();
 
             brandSlots.forEach(slot => {
-                const region = detectRegionFromSlot(slot);
-                if (regionFilter !== 'all' && region !== regionFilter) {
+                const city = detectRegionFromSlot(slot);
+                if (regionFilter !== 'all' && city !== regionFilter) {
                     return;
                 }
                 if (monthFilter !== 'all' && slot.month !== monthFilter) {
@@ -1614,12 +1665,14 @@
                     return;
                 }
 
-                const key = slot.dealer || slot.location || slot.slotID;
+                const key = buildDealerKey(SELECTED_BRAND, slot.dealer, slot.location);
                 if (!dealerMap.has(key)) {
                     dealerMap.set(key, {
+                        key,
                         dealer: slot.dealer || '經銷據點待確認',
                         location: slot.location || '',
-                        region,
+                        city,
+                        macroRegion: mapCityToRegion(city),
                         slots: [],
                         projects: new Map()
                     });
@@ -1656,18 +1709,26 @@
                     return;
                 }
                 const fragment = locationCardTemplate.content.cloneNode(true);
+                const cardRoot = fragment.querySelector('.location-card');
                 const dealerNameEl = fragment.querySelector('.dealer-name');
                 const dealerAddressEl = fragment.querySelector('.dealer-address');
-                const regionEl = fragment.querySelector('.location-city');
+                const regionEl = fragment.querySelector('.location-region');
                 const remainingBadge = fragment.querySelector('.remaining-badge');
                 const nextAvailableEl = fragment.querySelector('.next-available');
                 const totalSummaryEl = fragment.querySelector('.total-summary');
-                const actionsContainer = fragment.querySelector('.project-actions');
+                const projectSummaryEl = fragment.querySelector('.project-summary');
+                const detailButton = fragment.querySelector('.dealer-detail-button');
 
                 dealerNameEl.textContent = entry.dealer;
                 const addressParts = (entry.location || '').split('｜');
                 dealerAddressEl.textContent = addressParts[1] || addressParts[0] || '';
-                regionEl.textContent = entry.region === '未分類' ? '地區待確認' : entry.region;
+
+                const macro = entry.macroRegion && entry.macroRegion !== '未分類' ? entry.macroRegion : '';
+                const cityLabel = entry.city && entry.city !== '未分類' ? entry.city : '';
+                const regionLabel = macro
+                    ? `${macro}${cityLabel ? ` · ${cityLabel}` : ''}`
+                    : (cityLabel || '地區待確認');
+                regionEl.textContent = regionLabel;
 
                 const initialKey = `${SELECTED_BRAND}||${entry.dealer}`;
                 const initialCount = INITIAL_SLOTS_BY_DEALER[initialKey] || entry.slots.length;
@@ -1688,27 +1749,45 @@
 
                 const sortedSlots = [...entry.slots].sort((a, b) => (a.month || '').localeCompare(b.month || ''));
                 const nextSlot = sortedSlots[0];
-                nextAvailableEl.textContent = nextSlot ? `最近可預約：${formatFullMonth(nextSlot.month)}｜${nextSlot.dealer || ''}` : '最近可預約：尚未開放';
+                if (nextSlot) {
+                    const projectInfo = PROJECT_MAP[nextSlot.projectId] || {};
+                    nextAvailableEl.textContent = `最近可預約：${formatFullMonth(nextSlot.month)}｜${projectInfo.title || nextSlot.dealer || ''}`;
+                } else {
+                    nextAvailableEl.textContent = '最近可預約：尚未開放';
+                }
                 totalSummaryEl.textContent = `剩餘 ${remainingCount} / 初始 ${initialCount} 名額`;
 
-                actionsContainer.innerHTML = '';
+                projectSummaryEl.innerHTML = '';
                 if (entry.projects.size === 0) {
-                    const placeholder = document.createElement('p');
-                    placeholder.className = 'text-xs text-gray-500';
-                    placeholder.textContent = '此據點目前沒有對應的任務。';
-                    actionsContainer.appendChild(placeholder);
+                    const placeholder = document.createElement('span');
+                    placeholder.className = 'inline-flex items-center px-2.5 py-1 rounded-full bg-gray-100 text-xs text-gray-500';
+                    placeholder.textContent = '暫無任務資訊';
+                    projectSummaryEl.appendChild(placeholder);
                 } else {
                     entry.projects.forEach(({ projectId, count }) => {
                         const projectInfo = PROJECT_MAP[projectId] || {};
-                        const button = document.createElement('button');
-                        button.type = 'button';
-                        button.className = 'accent-button text-sm font-semibold px-3 py-2 rounded-lg';
-                        const projectAccent = projectInfo.brandAccent || accent;
-                        button.style.backgroundColor = projectAccent;
-                        button.style.boxShadow = `0 10px 20px -16px ${projectAccent}80`;
-                        button.textContent = `${projectInfo.title || '任務'}｜剩 ${count}`;
-                        button.addEventListener('click', () => openProjectSchedule(SELECTED_BRAND, projectId));
-                        actionsContainer.appendChild(button);
+                        const tag = document.createElement('span');
+                        tag.className = 'inline-flex items-center px-2.5 py-1 rounded-full bg-gray-100 text-xs text-gray-600';
+                        tag.textContent = `${projectInfo.title || '任務'}｜剩 ${count}`;
+                        projectSummaryEl.appendChild(tag);
+                    });
+                }
+
+                if (detailButton) {
+                    detailButton.style.backgroundColor = accent;
+                    detailButton.style.boxShadow = `0 10px 20px -12px ${accent}80`;
+                    detailButton.addEventListener('click', event => {
+                        event.stopPropagation();
+                        openDealerSchedule(SELECTED_BRAND, entry.key, entry);
+                    });
+                }
+
+                if (cardRoot) {
+                    cardRoot.addEventListener('click', event => {
+                        if (event.target && event.target.closest('button')) {
+                            return;
+                        }
+                        openDealerSchedule(SELECTED_BRAND, entry.key, entry);
                     });
                 }
 
@@ -1761,59 +1840,186 @@
             return nextSlot.dealer ? `${monthLabel} · ${nextSlot.dealer}` : monthLabel;
         }
 
-        function openProjectSchedule(brandName, projectId) {
-            const projectInfo = PROJECT_MAP[projectId];
-            if (!projectInfo) {
-                showMessage('error', '找不到專案資訊，請重新選擇品牌。');
-                return;
-            }
-
-            SELECTED_BRAND = brandName;
-            SELECTED_PROJECT = projectInfo;
-            updateBookingHeader();
-            fetchSlotsForProject(brandName, projectId);
-        }
-
         function updateBookingHeader() {
-            if (!SELECTED_PROJECT) {
-                bookingBreadcrumb.textContent = '';
+            const crumbs = [];
+
+            const goHome = () => {
+                SELECTED_BRAND = null;
+                SELECTED_PROJECT = null;
+                SELECTED_DEALER = null;
+                showBrandHome();
+            };
+
+            crumbs.push({
+                label: '品牌首頁',
+                action: goHome
+            });
+
+            let backHandler = null;
+            let backLabel = '返回上一頁';
+
+            if (SELECTED_PROJECT) {
+                const brandName = SELECTED_PROJECT.brandName;
+                if (brandName) {
+                    crumbs.push({
+                        label: brandName,
+                        action: () => {
+                            SELECTED_BRAND = brandName;
+                            SELECTED_PROJECT = null;
+                            SELECTED_DEALER = null;
+                            showBrandHome();
+                        }
+                    });
+                }
+                crumbs.push({
+                    label: SELECTED_PROJECT.title,
+                    action: () => {},
+                    isCurrent: true
+                });
+
+                bookingTitle.textContent = SELECTED_PROJECT.title;
+                bookingIntro.textContent = SELECTED_PROJECT.summary || '';
+
+                if (SELECTED_PROJECT.goal) {
+                    bookingGoal.classList.remove('hidden');
+                    bookingGoalText.textContent = SELECTED_PROJECT.goal;
+                } else {
+                    bookingGoal.classList.add('hidden');
+                    bookingGoalText.textContent = '';
+                }
+
+                backHandler = () => {
+                    SELECTED_PROJECT = null;
+                    SELECTED_DEALER = null;
+                    if (brandName) {
+                        SELECTED_BRAND = brandName;
+                    }
+                    showBrandHome();
+                };
+                backLabel = '返回任務列表';
+            } else if (SELECTED_DEALER) {
+                const brandName = SELECTED_DEALER.brandName;
+                const dealerKey = SELECTED_DEALER.key;
+                if (brandName) {
+                    crumbs.push({
+                        label: brandName,
+                        action: () => {
+                            SELECTED_BRAND = brandName;
+                            SELECTED_DEALER = null;
+                            showBrandHome();
+                        }
+                    });
+                }
+                crumbs.push({
+                    label: SELECTED_DEALER.dealerName || '經銷據點',
+                    action: dealerKey ? () => openDealerSchedule(brandName, dealerKey, SELECTED_DEALER) : null,
+                    isCurrent: true
+                });
+
+                bookingTitle.textContent = SELECTED_DEALER.dealerName || '可預約的時段';
+                bookingIntro.textContent = SELECTED_DEALER.location || '';
+                bookingGoal.classList.add('hidden');
+                bookingGoalText.textContent = '';
+
+                backHandler = () => {
+                    if (brandName) {
+                        SELECTED_DEALER = null;
+                        SELECTED_BRAND = brandName;
+                        showBrandHome();
+                    } else {
+                        goHome();
+                    }
+                };
+                backLabel = '返回據點列表';
+            } else {
                 bookingTitle.textContent = '可預約的時段';
                 bookingIntro.textContent = '';
                 bookingGoal.classList.add('hidden');
                 bookingGoalText.textContent = '';
-                return;
+                crumbs.push({
+                    label: '可預約的時段',
+                    isCurrent: true
+                });
             }
 
-            bookingBreadcrumb.textContent = `品牌首頁 / ${SELECTED_PROJECT.brandName} / ${SELECTED_PROJECT.title}`;
-            bookingTitle.textContent = SELECTED_PROJECT.title;
-            bookingIntro.textContent = SELECTED_PROJECT.summary;
+            renderBreadcrumb(bookingBreadcrumb, crumbs);
 
-            if (SELECTED_PROJECT.goal) {
-                bookingGoal.classList.remove('hidden');
-                bookingGoalText.textContent = SELECTED_PROJECT.goal;
-            } else {
-                bookingGoal.classList.add('hidden');
-                bookingGoalText.textContent = '';
+            if (bookingBackButton) {
+                if (backHandler) {
+                    bookingBackButton.classList.remove('hidden');
+                    bookingBackButton.textContent = backLabel;
+                    bookingBackButton.onclick = backHandler;
+                } else {
+                    bookingBackButton.classList.add('hidden');
+                    bookingBackButton.onclick = null;
+                }
             }
         }
 
-        // 4. (流程 1) 依品牌與專案載入可預約時段 - [模擬模式]
-        async function fetchSlotsForProject(brandName, projectId) {
+        function openDealerSchedule(brandName, dealerKey, dealerContext = null) {
+            if (!CURRENT_USER.email) {
+                showPage('login');
+                return;
+            }
+
+            const brandInfo = BRAND_DATA.find(brand => brand.name === brandName);
+            if (!brandInfo) {
+                showMessage('error', '找不到品牌資訊，請重新選擇。');
+                return;
+            }
+
+            const brandSlots = getBrandSlots(brandName);
+            const matchingSlots = brandSlots.filter(slot => buildDealerKey(brandName, slot.dealer, slot.location) === dealerKey);
+
+            const primarySlot = matchingSlots[0] || null;
+            const fallbackDealer = (SELECTED_DEALER && SELECTED_DEALER.key === dealerKey && SELECTED_DEALER.brandName === brandName)
+                ? SELECTED_DEALER
+                : null;
+
+            const derivedCity = primarySlot ? detectRegionFromSlot(primarySlot)
+                : (dealerContext && dealerContext.city) || (fallbackDealer && fallbackDealer.city) || '未分類';
+            const derivedMacro = (dealerContext && dealerContext.macroRegion)
+                || (fallbackDealer && fallbackDealer.macroRegion)
+                || mapCityToRegion(derivedCity);
+
+            const dealerName = primarySlot?.dealer
+                || (dealerContext && dealerContext.dealer)
+                || (fallbackDealer && fallbackDealer.dealerName)
+                || '經銷據點待確認';
+
+            const location = primarySlot?.location
+                || (dealerContext && dealerContext.location)
+                || (fallbackDealer && fallbackDealer.location)
+                || '';
+
+            SELECTED_BRAND = brandName;
+            SELECTED_PROJECT = null;
+            SELECTED_DEALER = {
+                key: dealerKey,
+                brandName,
+                dealerName,
+                location,
+                city: derivedCity,
+                macroRegion: derivedMacro
+            };
+
+            updateBookingHeader();
+
             showPage('booking');
             showLoading(true);
             showLoadError(null);
 
             setTimeout(() => {
                 try {
-                    const filteredSlots = MOCK_SLOTS_DATA.slots.filter(slot => slot.brand === brandName && slot.projectId === projectId);
-                    renderSlots(filteredSlots);
+                    const sorted = matchingSlots.slice().sort((a, b) => (a.month || '').localeCompare(b.month || ''));
+                    renderSlots(sorted);
                     showLoading(false);
                 } catch (error) {
-                    console.error('渲染模擬資料失敗:', error);
+                    console.error('渲染據點資料失敗:', error);
                     showLoadError(error.message);
                     showLoading(false);
                 }
-            }, 800);
+            }, 400);
         }
 
         // 5. 渲染時段卡片
@@ -1888,11 +2094,32 @@
                     slot => slot.slotID !== slotID
                 );
 
-                if (SELECTED_BRAND && SELECTED_PROJECT) {
+                if (SELECTED_DEALER && SELECTED_BRAND) {
+                    const dealerKey = SELECTED_DEALER.key;
+                    const remainingSlots = MOCK_SLOTS_DATA.slots.filter(slot => buildDealerKey(SELECTED_BRAND, slot.dealer, slot.location) === dealerKey);
+                    renderSlots(remainingSlots);
+                    updateBookingHeader();
+
+                    const brandInfo = BRAND_DATA.find(brand => brand.name === SELECTED_BRAND);
+                    if (brandInfo) {
+                        const brandSlots = getBrandSlots(SELECTED_BRAND);
+                        renderBrandCards();
+                        renderBrandSummary(brandInfo, brandSlots);
+                        renderBrandAvailabilityList();
+                    } else {
+                        renderBrandCards();
+                    }
+                } else if (SELECTED_BRAND && SELECTED_PROJECT) {
                     const remainingSlots = MOCK_SLOTS_DATA.slots.filter(slot => slot.brand === SELECTED_BRAND && slot.projectId === SELECTED_PROJECT.id);
                     renderSlots(remainingSlots);
+                    updateBookingHeader();
+                    renderBrandCards();
+                    renderBrandAvailabilityList();
+                } else {
+                    renderBrandCards();
                 }
 
+                renderRegionOverview();
                 refreshAdminDashboardIfVisible();
 
             }, 1500);
@@ -1949,6 +2176,56 @@
             }
             logoutButton.addEventListener('click', handleLogout);
             loginBackButton.addEventListener('click', () => resetLoginForm({ preserveInputs: true }));
+            if (brandBackButton) {
+                brandBackButton.addEventListener('click', () => clearBrandSelection());
+            }
+        }
+
+        function renderBreadcrumb(container, crumbs = []) {
+            if (!container) {
+                return;
+            }
+
+            container.innerHTML = '';
+
+            if (!Array.isArray(crumbs) || crumbs.length === 0) {
+                container.classList.add('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+
+            crumbs.forEach((crumb, index) => {
+                if (index > 0) {
+                    const separator = document.createElement('span');
+                    separator.className = 'text-gray-300';
+                    separator.textContent = '/';
+                    container.appendChild(separator);
+                }
+
+                const hasAction = typeof crumb.action === 'function';
+                let element;
+
+                if (hasAction) {
+                    element = document.createElement('button');
+                    element.type = 'button';
+                    let className = 'transition-colors text-emerald-600 hover:text-emerald-700';
+                    className += crumb.isCurrent ? ' font-semibold' : ' font-medium';
+                    element.className = className;
+                    element.addEventListener('click', crumb.action);
+                } else {
+                    element = document.createElement('span');
+                    element.className = crumb.isCurrent ? 'text-gray-700 font-semibold' : 'text-gray-500';
+                }
+
+                element.textContent = crumb.label || '';
+
+                if (crumb.isCurrent) {
+                    element.setAttribute('aria-current', 'page');
+                }
+
+                container.appendChild(element);
+            });
         }
 
         // [新] 顯示指定頁面
@@ -1960,7 +2237,7 @@
                 pageName = 'login';
             }
 
-            if (pageName === 'booking' && CURRENT_USER.email && !SELECTED_PROJECT) {
+            if (pageName === 'booking' && CURRENT_USER.email && !SELECTED_PROJECT && !SELECTED_DEALER) {
                 pageName = 'brand-home';
             }
 
