@@ -93,14 +93,88 @@
             color: #000;
         }
 
-        .brand-card {
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        .brand-directory-group {
+            border: 1px solid #E5E7EB;
+            border-radius: 1rem;
+            padding: 0.85rem 1rem;
+            background-color: #FFFFFF;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .brand-card.selected {
-            box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.35);
-            transform: translateY(-4px);
+        .brand-directory-group[open] {
+            border-color: #A7F3D0;
+            box-shadow: 0 18px 36px -28px rgba(16, 185, 129, 0.55);
+        }
+
+        .brand-directory-group + .brand-directory-group {
+            margin-top: 1rem;
+        }
+
+        .brand-directory-group > summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .brand-directory-toggle {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.75rem;
+            cursor: pointer;
+            list-style: none;
+            width: 100%;
+        }
+
+        .brand-directory-toggle:focus {
+            outline: none;
+        }
+
+        .brand-directory-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .brand-directory-toggle .collapse-icon {
+            transition: transform 0.2s ease;
+        }
+
+        .brand-directory-group:not([open]) .collapse-icon {
+            transform: rotate(-90deg);
+        }
+
+        .brand-directory-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .brand-directory-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.625rem 0.75rem;
+            border-radius: 0.75rem;
+            border: 1px solid transparent;
+            background-color: #F9FAFB;
+            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .brand-directory-item button {
+            color: var(--skoda-green);
+            font-weight: 600;
+        }
+
+        .brand-directory-item:hover {
+            background-color: #ECFDF5;
+            border-color: #A7F3D0;
+            transform: translateX(2px);
+        }
+
+        .brand-directory-item[data-active="true"] {
+            border-color: var(--skoda-green);
+            background-color: #D1FAE5;
         }
 
         .accent-button {
@@ -122,23 +196,6 @@
             transition: transform 0.2s ease;
         }
 
-        .brand-card-accent {
-            width: 100%;
-            height: 4px;
-            border-radius: 9999px;
-            margin-bottom: 16px;
-            background-color: var(--skoda-green);
-            transition: transform 0.3s ease;
-        }
-
-        .brand-card:hover .brand-card-accent {
-            transform: scaleX(1.04);
-        }
-
-        .brand-card.selected .brand-card-accent {
-            transform: scaleX(1.08);
-        }
-
         .brand-badge {
             display: inline-flex;
             align-items: center;
@@ -156,6 +213,86 @@
         .brand-availability {
             font-size: 0.8125rem;
             font-weight: 600;
+        }
+
+        .month-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .month-selector button {
+            border-radius: 9999px;
+            border: 1px solid #E5E7EB;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            background-color: #F9FAFB;
+            transition: all 0.2s ease;
+        }
+
+        .month-selector button:hover {
+            background-color: #ECFDF5;
+            border-color: #A7F3D0;
+            color: var(--skoda-dark-green);
+        }
+
+        .month-selector button[aria-pressed="true"] {
+            background-color: var(--skoda-green);
+            border-color: var(--skoda-dark-green);
+            color: #ffffff;
+            box-shadow: 0 12px 24px -18px rgba(15, 118, 110, 0.4);
+        }
+
+        .monthly-brand-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .monthly-brand-item {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 1rem;
+            padding: 0.85rem 1rem;
+            background-color: #F9FAFB;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .monthly-brand-item:hover {
+            border-color: #A7F3D0;
+            background-color: #ECFDF5;
+            transform: translateY(-1px);
+        }
+
+        .monthly-brand-item[aria-pressed="true"] {
+            border-color: var(--skoda-green);
+            background-color: #D1FAE5;
+            box-shadow: 0 16px 30px -18px rgba(79, 157, 60, 0.35);
+        }
+
+        .brand-session-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+        }
+
+        .brand-session-card {
+            border: 1px solid #E5E7EB;
+            border-radius: 1rem;
+            padding: 1rem;
+            background-color: #F9FAFB;
+            transition: all 0.2s ease;
+        }
+
+        .brand-session-card:hover {
+            border-color: #A7F3D0;
+            background-color: #ffffff;
+            box-shadow: 0 10px 24px -20px rgba(15, 118, 110, 0.35);
         }
     </style>
 </head>
@@ -269,59 +406,90 @@
     <!-- =================================================== -->
     <!-- 頁面 2: 品牌首頁 (登入後預設顯示) -->
     <!-- =================================================== -->
-    <main id="page-brand-home" class="hidden max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
-        <div class="grid lg:grid-cols-3 gap-6 lg:gap-8">
-            <section class="lg:col-span-1 space-y-4">
-                <div>
-                    <h1 class="text-3xl font-bold tracking-tight text-gray-900">選擇您要執行的品牌</h1>
-                    <p class="text-gray-600 mt-2">登入後先挑選品牌，即可在同一頁檢視該品牌的任務儀表板與統計摘要。</p>
+    <main id="page-brand-home" class="hidden max-w-6xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
+        <header class="space-y-3">
+            <h1 class="text-3xl font-bold tracking-tight text-gray-900">選擇您要執行的品牌</h1>
+            <p class="text-gray-600">左側支援搜尋與折疊列表，中央依月份展示品牌與場次，右側則提供品牌任務儀表板。</p>
+        </header>
+
+        <div class="grid lg:grid-cols-12 gap-6 lg:gap-8">
+            <aside class="lg:col-span-3 space-y-6">
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 space-y-4">
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-900">搜尋品牌</h2>
+                        <p class="text-sm text-gray-500 mt-2">輸入品牌或原產地關鍵字，快速縮小可執行任務範圍。</p>
+                    </div>
+                    <div class="relative">
+                        <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z" />
+                        </svg>
+                        <input id="brand-search" type="search" placeholder="搜尋品牌、原產地或任務描述" class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm" />
+                    </div>
+                    <p class="text-xs text-gray-500">支援即時篩選，與左側品牌折疊列表即時同步更新。</p>
+                    <button type="button" id="reset-search-button" class="hidden skoda-button-outline font-medium w-full py-2.5 px-4 rounded-lg">清除搜尋條件</button>
                 </div>
-                <div id="brand-grid" class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"></div>
-            </section>
-            <section class="lg:col-span-2 space-y-4">
-                <div id="brand-dashboard-empty" class="bg-white rounded-2xl shadow-lg border border-dashed border-gray-300 p-10 flex flex-col items-center justify-center text-center text-gray-500">
-                    <svg class="w-12 h-12 mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7h18M3 12h18M3 17h18"/></svg>
-                    <p class="font-semibold text-gray-600">請從左側選擇一個品牌</p>
-                    <p class="mt-2 text-sm">系統會顯示該品牌的任務目標、開放預約任務與最近可預約時段，協助您快速挑選合適案件。</p>
-                </div>
-                <div id="brand-dashboard" class="hidden bg-white rounded-2xl shadow-lg border-t-4">
-                    <div class="p-6 pb-2 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                    <div class="flex items-start justify-between gap-4">
                         <div>
-                            <p class="text-sm text-gray-500" id="brand-dashboard-breadcrumb"></p>
-                            <h2 id="brand-dashboard-title" class="text-3xl font-bold tracking-tight text-gray-900"></h2>
-                            <p id="brand-dashboard-description" class="text-gray-600 mt-2"></p>
+                            <h2 class="text-xl font-semibold text-gray-900">品牌列表</h2>
+                            <p class="text-sm text-gray-500 mt-1">依執行月份分組，可展開或收合列表並快速切換品牌。</p>
+                        </div>
+                    </div>
+                    <div id="brand-directory" class="mt-4 space-y-5"></div>
+                    <p id="brand-directory-empty" class="hidden text-sm text-gray-500 bg-gray-50 border border-dashed border-gray-300 rounded-2xl p-4 text-center">找不到符合搜尋條件的品牌，請調整關鍵字或清除篩選。</p>
+                </div>
+            </aside>
+
+            <section class="lg:col-span-5 space-y-6">
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                    <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wide">執行月份</p>
+                            <h2 id="month-card-title" class="text-2xl font-bold text-gray-900 mt-1">2025 年 11 月可執行品牌</h2>
+                            <p id="month-card-summary" class="text-sm text-gray-500 mt-3">此區域會列出最近月份可執行的品牌，方便快速挑選任務。</p>
+                        </div>
+                        <div id="month-selector" class="month-selector"></div>
+                    </div>
+                    <div class="mt-6">
+                        <div id="monthly-brand-list" class="monthly-brand-list"></div>
+                        <p id="monthly-brand-empty" class="hidden text-sm text-gray-500 bg-gray-50 border border-dashed border-gray-300 rounded-xl p-4 text-center">此月份暫無符合搜尋條件的品牌，請切換月份或調整關鍵字。</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                    <div class="flex flex-col gap-4">
+                        <div>
+                            <p class="text-sm font-semibold text-gray-500 uppercase tracking-wide">品牌場次</p>
+                            <h2 id="session-card-title" class="text-2xl font-bold text-gray-900 mt-1">請先選擇品牌</h2>
+                            <p id="session-card-summary" class="text-sm text-gray-500 mt-3">選取上方品牌後，會依月份顯示可執行場次與地點。</p>
+                        </div>
+                        <div id="session-brand-months" class="month-selector hidden"></div>
+                    </div>
+                    <div id="brand-session-list" class="brand-session-list mt-6"></div>
+                    <p id="brand-session-empty" class="hidden text-sm text-gray-500 bg-gray-50 border border-dashed border-gray-300 rounded-xl p-4 text-center">此品牌在選定月份暫無安排，可切換其他月份或挑選不同品牌。</p>
+                </div>
+            </section>
+
+            <section class="lg:col-span-4">
+                <div id="brand-dashboard" class="bg-white rounded-2xl shadow-lg border border-gray-100">
+                    <div class="p-6 pb-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500" id="brand-dashboard-breadcrumb">品牌首頁</p>
+                            <h2 id="brand-dashboard-title" class="text-3xl font-bold tracking-tight text-gray-900">尚未選擇品牌</h2>
+                            <p id="brand-dashboard-description" class="text-gray-600 mt-2">請先從中央的月份清單選擇品牌，這裡會顯示品牌任務重點與建議行程。</p>
                             <p id="brand-dashboard-meta" class="text-sm text-gray-500 mt-2"></p>
                         </div>
-                        <button type="button" class="skoda-button-outline font-medium py-2.5 px-5 rounded-lg" onclick="clearBrandSelection()">
-                            返回品牌列表
+                        <button type="button" id="brand-dashboard-reset" class="hidden skoda-button-outline font-medium py-2.5 px-5 rounded-lg">
+                            清除選擇
                         </button>
                     </div>
-                    <div id="brand-dashboard-projects" class="p-6 pt-4 grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+                    <div id="brand-dashboard-projects" class="p-6 pt-4 grid grid-cols-1 gap-6 border-t border-gray-100">
+                        <p class="text-sm text-gray-500">尚未載入品牌任務，請先挑選品牌。</p>
+                    </div>
                 </div>
             </section>
         </div>
-
-        <template id="brand-card-template">
-            <div class="brand-card bg-white rounded-2xl shadow-lg p-6 flex flex-col justify-between border border-gray-100 transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl">
-                <div class="brand-card-accent"></div>
-                <div class="flex items-start justify-between gap-4">
-                    <div>
-                        <h2 class="text-2xl font-bold text-gray-900 brand-name"></h2>
-                        <p class="text-sm text-gray-500 mt-1 brand-origin"></p>
-                    </div>
-                    <span class="brand-badge"></span>
-                </div>
-                <p class="text-gray-600 mt-4 brand-description"></p>
-                <div class="mt-6 flex flex-col gap-2 text-sm text-gray-500">
-                    <span class="brand-availability"></span>
-                    <span class="brand-project-count"></span>
-                    <span class="brand-next-slot"></span>
-                </div>
-                <button type="button" class="mt-6 accent-button font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center">
-                    查看品牌儀表板
-                </button>
-            </div>
-        </template>
 
         <template id="project-card-template">
             <div class="project-card bg-white rounded-2xl shadow-lg p-6 flex flex-col justify-between border-t-4">
@@ -587,16 +755,37 @@
             return `${month} 月`;
         }
 
+        const MONTH_META = {
+            '2025-11': {
+                label: '2025 年 11 月',
+                summary: 'Q4 推廣檔期，聚焦年終前的主力車款與核心展示據點。'
+            },
+            '2025-12': {
+                label: '2025 年 12 月',
+                summary: '年底衝刺檔期，擴充更多經銷商場次供神秘客安排。'
+            }
+        };
+
+        const MONTHLY_BRAND_ROSTER = {
+            '2025-11': ['Škoda', 'Toyota', 'MAZDA', 'Volkswagen', 'Honda'],
+            '2025-12': ['Volvo', 'Audi', 'Ford', 'Hyundai', 'MAZDA']
+        };
+
+        const MONTH_ORDER = Object.keys(MONTH_META).sort();
+        if (!SELECTED_MONTH) {
+            SELECTED_MONTH = MONTH_ORDER[0] || null;
+        }
+
         const BRAND_DATA = [
-            { name: 'MAZDA', origin: '日本 / 台灣馬自達', description: '聚焦在以人為本的經典駕馭體驗與客製化賞車流程。', accent: '#BF1E2E' },
-            { name: 'Škoda', origin: '捷克 / 歐洲進口', description: '強調 Simply Clever 的驚喜細節與全方位的家庭用車情境。', accent: '#0E3B33' },
-            { name: 'Toyota', origin: '日本 / 和泰汽車', description: '檢視高銷量車款的交車節奏與展間待客標準化。', accent: '#EB0A1E' },
-            { name: 'Volvo', origin: '瑞典 / 裕隆通用', description: '聚焦北歐豪華氛圍營造與安全科技完整介紹。', accent: '#003057' },
-            { name: 'Audi', origin: '德國 / 奧迪台灣', description: '測試 premium 展間的迎賓禮儀、科技座艙演示與試駕流程。', accent: '#000000' },
-            { name: 'Honda', origin: '日本 / 台灣本田', description: '確認熱銷車款排隊試乘安排與售後維護諮詢的一致性。', accent: '#DA251D' },
-            { name: 'Ford', origin: '美國 / 福特六和', description: '重點檢視 Ford 純油與油電產品的體驗一致性與數位化介紹。', accent: '#003399' },
-            { name: 'Volkswagen', origin: '德國 / 台灣福斯', description: '追蹤歐系主流車款的智慧互聯示範與售後承諾。', accent: '#0A3A5A' },
-            { name: 'Hyundai', origin: '韓國 / 南陽實業', description: '評估現代汽車新能源與家庭休旅的展間服務節奏。', accent: '#002A5C' }
+            { name: 'MAZDA', origin: '日本 / 台灣馬自達', description: '聚焦在以人為本的經典駕馭體驗與客製化賞車流程。', accent: '#BF1E2E', regions: ['central', 'south'] },
+            { name: 'Škoda', origin: '捷克 / 歐洲進口', description: '強調 Simply Clever 的驚喜細節與全方位的家庭用車情境。', accent: '#0E3B33', regions: ['north', 'central'] },
+            { name: 'Toyota', origin: '日本 / 和泰汽車', description: '檢視高銷量車款的交車節奏與展間待客標準化。', accent: '#EB0A1E', regions: ['north', 'central'] },
+            { name: 'Volvo', origin: '瑞典 / 裕隆通用', description: '聚焦北歐豪華氛圍營造與安全科技完整介紹。', accent: '#003057', regions: ['central', 'east'] },
+            { name: 'Audi', origin: '德國 / 奧迪台灣', description: '測試 premium 展間的迎賓禮儀、科技座艙演示與試駕流程。', accent: '#000000', regions: ['north', 'east'] },
+            { name: 'Honda', origin: '日本 / 台灣本田', description: '確認熱銷車款排隊試乘安排與售後維護諮詢的一致性。', accent: '#DA251D', regions: ['south'] },
+            { name: 'Ford', origin: '美國 / 福特六和', description: '重點檢視 Ford 純油與油電產品的體驗一致性與數位化介紹。', accent: '#003399', regions: ['south'] },
+            { name: 'Volkswagen', origin: '德國 / 台灣福斯', description: '追蹤歐系主流車款的智慧互聯示範與售後承諾。', accent: '#0A3A5A', regions: ['north', 'east'] },
+            { name: 'Hyundai', origin: '韓國 / 南陽實業', description: '評估現代汽車新能源與家庭休旅的展間服務節奏。', accent: '#002A5C', regions: ['south', 'east'] }
         ];
 
         const BRAND_PROJECTS = {
@@ -628,6 +817,21 @@
                 { id: 'hyundai-ioniq5', title: 'IONIQ 5 科技生活體驗', category: '純電跨界', summary: '以科技家庭為設定，檢視 IONIQ 5 的展示與交付流程。', goal: '評估顧問如何說明 V2L、充電資源與智慧安全科技。' }
             ]
         };
+
+        const BRAND_MONTH_LOOKUP = {};
+        MONTH_ORDER.forEach(monthKey => {
+            const roster = MONTHLY_BRAND_ROSTER[monthKey] || [];
+            roster.forEach(brandName => {
+                if (!BRAND_MONTH_LOOKUP[brandName]) {
+                    BRAND_MONTH_LOOKUP[brandName] = [];
+                }
+                if (!BRAND_MONTH_LOOKUP[brandName].includes(monthKey)) {
+                    BRAND_MONTH_LOOKUP[brandName].push(monthKey);
+                }
+            });
+        });
+
+        Object.values(BRAND_MONTH_LOOKUP).forEach(months => months.sort());
 
         const SEASONAL_LOCATIONS = {
             '2025-11': ['台北內湖', '新竹東區', '台中公益', '台南永康', '高雄鳳山', '花蓮吉安'],
@@ -768,21 +972,24 @@
 
         let SELECTED_BRAND = null;
         let SELECTED_PROJECT = null;
+        let SELECTED_MONTH = null;
+        let BRAND_SEARCH_QUERY = '';
+        const DIRECTORY_COLLAPSE_STATE = {};
 
         // [開發者註記] 模擬已核准的使用者（含雙重驗證碼）
         const MOCK_APPROVED_USERS = [
             {
-                email: "approved@skoda.tw",
-                name: "王大明",
-                password: "mission789",
-                twoFactorCode: "246810",
+                email: "tust@gmail.com",
+                name: "測試帳號",
+                password: "123456",
+                twoFactorCode: "123456",
                 role: "member"
             },
             {
-                email: "vv123@gmail.com",
-                name: "管理員測試",
-                password: "1234567",
-                twoFactorCode: "135790",
+                email: "tust2@gmail.com",
+                name: "神秘客測試",
+                password: "123456",
+                twoFactorCode: "123456",
                 role: "admin"
             }
         ];
@@ -807,16 +1014,28 @@
         const welcomeMessage = document.getElementById('welcome-message');
 
         // 品牌首頁
-        const brandGrid = document.getElementById('brand-grid');
-        const brandCardTemplate = document.getElementById('brand-card-template');
-        const brandDashboardEmpty = document.getElementById('brand-dashboard-empty');
         const brandDashboardContainer = document.getElementById('brand-dashboard');
         const brandDashboardBreadcrumb = document.getElementById('brand-dashboard-breadcrumb');
         const brandDashboardTitle = document.getElementById('brand-dashboard-title');
         const brandDashboardDescription = document.getElementById('brand-dashboard-description');
         const brandDashboardMeta = document.getElementById('brand-dashboard-meta');
         const brandDashboardProjects = document.getElementById('brand-dashboard-projects');
+        const brandDashboardResetButton = document.getElementById('brand-dashboard-reset');
         const projectCardTemplate = document.getElementById('project-card-template');
+        const brandSearchInput = document.getElementById('brand-search');
+        const resetSearchButton = document.getElementById('reset-search-button');
+        const brandDirectoryContainer = document.getElementById('brand-directory');
+        const brandDirectoryEmpty = document.getElementById('brand-directory-empty');
+        const monthSelector = document.getElementById('month-selector');
+        const monthCardTitle = document.getElementById('month-card-title');
+        const monthCardSummary = document.getElementById('month-card-summary');
+        const monthlyBrandList = document.getElementById('monthly-brand-list');
+        const monthlyBrandEmpty = document.getElementById('monthly-brand-empty');
+        const sessionCardTitle = document.getElementById('session-card-title');
+        const sessionCardSummary = document.getElementById('session-card-summary');
+        const sessionBrandMonths = document.getElementById('session-brand-months');
+        const brandSessionList = document.getElementById('brand-session-list');
+        const brandSessionEmpty = document.getElementById('brand-session-empty');
 
         // 預約頁面標頭
         const bookingBreadcrumb = document.getElementById('booking-breadcrumb');
@@ -888,11 +1107,20 @@
         // 1. 頁面載入時執行
         document.addEventListener('DOMContentLoaded', () => {
             // [開發者註記] 預設顯示登入頁面
-            renderBrandCards();
+            renderMonthSelectors();
+            renderMonthlyBrandList();
+            renderBrandSessions();
+            renderBrandDirectory();
+            updateSearchResetButton();
             showPage('login');
             setupNavigation();
+            setupBrandFilters();
             setLoginStep(1);
         });
+
+        if (brandDashboardResetButton) {
+            brandDashboardResetButton.addEventListener('click', clearBrandSelection);
+        }
 
         // 2. [新] 處理登入 - [模擬模式]
         async function handleLoginSubmit(event) {
@@ -969,6 +1197,18 @@
             CURRENT_USER.role = null;
             SELECTED_BRAND = null;
             SELECTED_PROJECT = null;
+            SELECTED_MONTH = MONTH_ORDER[0] || SELECTED_MONTH;
+            BRAND_SEARCH_QUERY = '';
+            if (brandSearchInput) {
+                brandSearchInput.value = '';
+            }
+            updateSearchResetButton();
+            Object.keys(DIRECTORY_COLLAPSE_STATE).forEach(key => delete DIRECTORY_COLLAPSE_STATE[key]);
+            renderMonthSelectors();
+            renderMonthlyBrandList();
+            renderBrandSessions();
+            renderBrandDirectory();
+            renderBrandDashboard();
             updateNavUI(false); // 更新導航欄為 "登入前"
             resetLoginForm();
             showPage('login'); // 顯示登入頁面
@@ -1001,118 +1241,507 @@
             const targetBrand = SELECTED_BRAND || null;
             SELECTED_PROJECT = null;
 
-            renderBrandCards();
+            renderMonthSelectors();
+            renderMonthlyBrandList();
+            renderBrandSessions();
+            renderBrandDirectory();
+            renderBrandDashboard(targetBrand);
+        }
 
-            if (targetBrand) {
-                renderBrandDashboard(targetBrand);
+        function updateSearchResetButton() {
+            if (!resetSearchButton) return;
+            if (BRAND_SEARCH_QUERY) {
+                resetSearchButton.classList.remove('hidden');
             } else {
-                SELECTED_BRAND = null;
-                showBrandDashboardPlaceholder();
+                resetSearchButton.classList.add('hidden');
             }
         }
 
-        function renderBrandCards() {
-            if (!brandCardTemplate) return;
+        function matchesBrandQuery(brand) {
+            if (!BRAND_SEARCH_QUERY) return true;
+            const query = BRAND_SEARCH_QUERY.toLowerCase();
+            const monthLabels = (BRAND_MONTH_LOOKUP[brand.name] || [])
+                .map(monthKey => formatMonthLabel(monthKey))
+                .filter(Boolean);
+            return [brand.name, brand.origin, brand.description, ...monthLabels]
+                .some(value => value && value.toLowerCase().includes(query));
+        }
 
-            brandGrid.innerHTML = '';
-            BRAND_DATA.forEach(brand => {
-                const fragment = brandCardTemplate.content.cloneNode(true);
-                const card = fragment.querySelector('.brand-card');
-                const button = fragment.querySelector('button');
-                const projectCountLabel = fragment.querySelector('.brand-project-count');
-                const nextSlotLabel = fragment.querySelector('.brand-next-slot');
-                const availabilityLabel = fragment.querySelector('.brand-availability');
-                const accentStrip = fragment.querySelector('.brand-card-accent');
-                const badge = fragment.querySelector('.brand-badge');
-                const descriptionEl = fragment.querySelector('.brand-description');
-                const brandProjects = BRAND_PROJECTS[brand.name] || [];
-                const upcomingSlot = getNextSlotForBrand(brand.name);
+        function getBrandsForMonth(monthKey) {
+            const roster = MONTHLY_BRAND_ROSTER[monthKey] || [];
+            return roster
+                .map(name => BRAND_DATA.find(brand => brand.name === name))
+                .filter(Boolean);
+        }
 
-                fragment.querySelector('.brand-name').textContent = brand.name;
-                fragment.querySelector('.brand-origin').textContent = brand.origin;
-                if (descriptionEl) {
-                    descriptionEl.textContent = brand.description;
-                }
-                projectCountLabel.textContent = `任務數量：${brandProjects.length}`;
-                nextSlotLabel.textContent = upcomingSlot ? `最近時段：${upcomingSlot}` : '最近時段：尚未開放';
-                if (brand.accent) {
-                    nextSlotLabel.style.color = brand.accent;
-                }
+        function selectMonth(monthKey, options = {}) {
+            if (!monthKey || !MONTH_META[monthKey]) {
+                return;
+            }
 
-                const monthlySummary = getMonthlyAvailabilitySummary();
-                if (availabilityLabel) {
-                    availabilityLabel.textContent = monthlySummary ? `本季配置：${monthlySummary}` : '本季配置：待公布';
-                    if (brand.accent) {
-                        availabilityLabel.style.color = brand.accent;
-                    }
-                }
+            const previousBrand = SELECTED_BRAND;
+            const desiredBrand = options.brandName || previousBrand;
+            const preserveBrand = Boolean(options.preserveBrand);
 
-                if (accentStrip && brand.accent) {
-                    accentStrip.style.backgroundColor = brand.accent;
-                    accentStrip.style.boxShadow = `0 16px 32px -24px ${brand.accent}80`;
-                }
+            SELECTED_MONTH = monthKey;
 
-                if (badge) {
-                    badge.textContent = brand.name;
-                    if (brand.accent) {
-                        badge.style.backgroundColor = brand.accent;
-                        badge.style.boxShadow = `0 12px 24px -16px ${brand.accent}80`;
-                    } else {
-                        badge.style.backgroundColor = '#4B5563';
-                    }
-                }
+            const monthBrands = MONTHLY_BRAND_ROSTER[monthKey] || [];
+            if (desiredBrand && monthBrands.includes(desiredBrand)) {
+                SELECTED_BRAND = desiredBrand;
+            } else if (!preserveBrand) {
+                SELECTED_BRAND = null;
+                SELECTED_PROJECT = null;
+            } else if (!desiredBrand) {
+                SELECTED_BRAND = null;
+                SELECTED_PROJECT = null;
+            }
 
-                if (brand.accent) {
-                    card.style.borderColor = `${brand.accent}22`;
-                    button.style.backgroundColor = brand.accent;
-                    button.style.boxShadow = `0 12px 24px -16px ${brand.accent}80`;
-                } else {
-                    card.style.borderColor = '';
-                    button.style.backgroundColor = '#0E3B33';
-                    button.style.boxShadow = '';
-                }
-                button.style.color = '#ffffff';
+            if (previousBrand !== SELECTED_BRAND) {
+                SELECTED_PROJECT = null;
+            }
 
-                card.dataset.brand = brand.name;
-                card.setAttribute('role', 'button');
-                card.setAttribute('tabindex', '0');
-                card.setAttribute('aria-pressed', SELECTED_BRAND === brand.name ? 'true' : 'false');
+            renderMonthSelectors();
+            renderMonthlyBrandList();
+            renderBrandSessions();
+            renderBrandDirectory();
+            renderBrandDashboard(SELECTED_BRAND);
+        }
 
-                if (SELECTED_BRAND === brand.name) {
-                    card.classList.add('selected');
-                    if (brand.accent) {
-                        card.style.boxShadow = `0 20px 40px -20px ${brand.accent}66`;
-                    }
-                } else {
-                    card.classList.remove('selected');
-                    card.style.boxShadow = '';
-                }
+        function renderMonthSelectors() {
+            if (!monthSelector) return;
 
-                const handleSelectBrand = (event) => {
-                    event.stopPropagation();
-                    openBrandDashboard(brand.name);
-                };
+            monthSelector.innerHTML = '';
 
-                card.addEventListener('click', () => openBrandDashboard(brand.name));
-                card.addEventListener('keydown', (event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault();
-                        openBrandDashboard(brand.name);
+            MONTH_ORDER.forEach(monthKey => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                const label = formatMonthLabel(monthKey) || MONTH_META[monthKey]?.label || monthKey;
+                button.textContent = label;
+                const isActive = monthKey === SELECTED_MONTH;
+                button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+                button.addEventListener('click', () => {
+                    if (!isActive) {
+                        selectMonth(monthKey);
                     }
                 });
-                button.addEventListener('click', handleSelectBrand);
+                monthSelector.appendChild(button);
+            });
 
-                brandGrid.appendChild(fragment);
+            if (monthCardTitle) {
+                const activeLabel = SELECTED_MONTH
+                    ? (MONTH_META[SELECTED_MONTH]?.label || `${formatMonthLabel(SELECTED_MONTH)}排程`)
+                    : '執行月份';
+                monthCardTitle.textContent = SELECTED_MONTH
+                    ? `${activeLabel}可執行品牌`
+                    : '近期可執行品牌';
+            }
+
+            if (monthCardSummary) {
+                if (!SELECTED_MONTH) {
+                    monthCardSummary.textContent = '請稍後，將更新可執行品牌月份。';
+                    return;
+                }
+                const summaryText = MONTH_META[SELECTED_MONTH]?.summary || '此月份將於稍後公布詳細說明。';
+                const brandsInMonth = getBrandsForMonth(SELECTED_MONTH);
+                if (BRAND_SEARCH_QUERY) {
+                    const matched = brandsInMonth.filter(matchesBrandQuery).length;
+                    monthCardSummary.textContent = `${summaryText}（${matched}/${brandsInMonth.length} 品牌符合搜尋條件）`;
+                } else {
+                    monthCardSummary.textContent = `${summaryText}（共 ${brandsInMonth.length} 個品牌任務）`;
+                }
+            }
+        }
+
+        function renderMonthlyBrandList() {
+            if (!monthlyBrandList) return;
+
+            monthlyBrandList.innerHTML = '';
+            if (!SELECTED_MONTH) {
+                if (monthlyBrandEmpty) {
+                    monthlyBrandEmpty.classList.remove('hidden');
+                    monthlyBrandEmpty.textContent = '尚未設定執行月份，請稍後再查看。';
+                }
+                return;
+            }
+
+            const brands = getBrandsForMonth(SELECTED_MONTH);
+            const filteredBrands = brands.filter(matchesBrandQuery);
+
+            if (!filteredBrands.length) {
+                if (monthlyBrandEmpty) {
+                    monthlyBrandEmpty.classList.remove('hidden');
+                    monthlyBrandEmpty.textContent = BRAND_SEARCH_QUERY
+                        ? '此月份暫無符合搜尋條件的品牌，請調整關鍵字或清除搜尋。'
+                        : '此月份暫無品牌安排，請切換其他月份。';
+                }
+                return;
+            }
+
+            if (monthlyBrandEmpty) {
+                monthlyBrandEmpty.classList.add('hidden');
+            }
+
+            if (SELECTED_BRAND && !filteredBrands.some(brand => brand.name === SELECTED_BRAND)) {
+                SELECTED_BRAND = null;
+                SELECTED_PROJECT = null;
+            }
+
+            filteredBrands.forEach(brand => {
+                const item = document.createElement('button');
+                item.type = 'button';
+                item.className = 'monthly-brand-item';
+                const isActive = SELECTED_BRAND === brand.name;
+                item.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+
+                const infoWrapper = document.createElement('div');
+                const nameEl = document.createElement('p');
+                nameEl.className = 'text-base font-semibold text-gray-900';
+                nameEl.textContent = brand.name;
+
+                const originEl = document.createElement('p');
+                originEl.className = 'text-xs text-gray-500 mt-1';
+                originEl.textContent = brand.origin;
+
+                infoWrapper.appendChild(nameEl);
+                infoWrapper.appendChild(originEl);
+
+                const monthsWrapper = document.createElement('div');
+                monthsWrapper.className = 'flex flex-wrap gap-2 mt-2';
+                const brandMonths = (BRAND_MONTH_LOOKUP[brand.name] || []).slice(0, 3);
+                brandMonths.forEach(monthKey => {
+                    const chip = document.createElement('span');
+                    chip.className = 'px-3 py-1 rounded-full text-xs font-semibold';
+                    chip.textContent = formatMonthLabel(monthKey) || monthKey;
+                    if (brand.accent) {
+                        chip.style.backgroundColor = `${brand.accent}12`;
+                        chip.style.color = brand.accent;
+                    } else {
+                        chip.style.backgroundColor = '#E5E7EB';
+                        chip.style.color = '#374151';
+                    }
+                    monthsWrapper.appendChild(chip);
+                });
+                if (brandMonths.length) {
+                    infoWrapper.appendChild(monthsWrapper);
+                }
+
+                const actionWrapper = document.createElement('div');
+                actionWrapper.className = 'flex flex-col items-end gap-2';
+
+                const projectBadge = document.createElement('span');
+                projectBadge.className = 'text-xs font-semibold uppercase tracking-wide px-3 py-1 rounded-full';
+                const projectCount = (BRAND_PROJECTS[brand.name] || []).length;
+                projectBadge.textContent = `${projectCount} 項任務`;
+                if (brand.accent) {
+                    projectBadge.style.backgroundColor = `${brand.accent}14`;
+                    projectBadge.style.color = brand.accent;
+                } else {
+                    projectBadge.style.backgroundColor = '#E5E7EB';
+                    projectBadge.style.color = '#1F2937';
+                }
+                actionWrapper.appendChild(projectBadge);
+
+                const nextSlot = getNextSlotForBrand(brand.name, SELECTED_MONTH);
+                const availabilityEl = document.createElement('p');
+                availabilityEl.className = 'text-xs text-gray-500';
+                availabilityEl.textContent = nextSlot ? `最近場次：${nextSlot}` : '最近場次：待公布';
+                if (brand.accent) {
+                    availabilityEl.style.color = brand.accent;
+                }
+                actionWrapper.appendChild(availabilityEl);
+
+                item.appendChild(infoWrapper);
+                item.appendChild(actionWrapper);
+
+                item.addEventListener('click', () => {
+                    openBrandDashboard(brand.name, { month: SELECTED_MONTH });
+                });
+
+                monthlyBrandList.appendChild(item);
             });
         }
 
-        function showBrandDashboardPlaceholder() {
-            brandDashboardProjects.innerHTML = '';
-            brandDashboardContainer.classList.add('hidden');
-            brandDashboardEmpty.classList.remove('hidden');
-            brandDashboardTitle.style.color = '';
-            brandDashboardBreadcrumb.style.color = '';
+        function renderBrandSessions() {
+            if (!brandSessionList || !sessionCardTitle || !sessionCardSummary) return;
+
+            brandSessionList.innerHTML = '';
+            if (sessionBrandMonths) {
+                sessionBrandMonths.innerHTML = '';
+                sessionBrandMonths.classList.add('hidden');
+            }
+
+            if (!SELECTED_BRAND) {
+                sessionCardTitle.textContent = '請先選擇品牌';
+                sessionCardSummary.textContent = '選取上方品牌後，會依月份顯示可執行場次與地點。';
+                if (brandSessionEmpty) {
+                    brandSessionEmpty.classList.add('hidden');
+                }
+                return;
+            }
+
+            const brandInfo = BRAND_DATA.find(brand => brand.name === SELECTED_BRAND);
+            const accent = brandInfo?.accent || '#0E3B33';
+            const monthLabel = formatMonthLabel(SELECTED_MONTH) || MONTH_META[SELECTED_MONTH]?.label || '近期月份';
+
+            sessionCardTitle.textContent = `${SELECTED_BRAND} · ${monthLabel} 場次`;
+            sessionCardSummary.textContent = '整理當月可執行的任務場次，點擊任務卡可進一步預約或查看詳情。';
+
+            const brandMonths = BRAND_MONTH_LOOKUP[SELECTED_BRAND] || [];
+            if (sessionBrandMonths) {
+                if (brandMonths.length) {
+                    sessionBrandMonths.classList.remove('hidden');
+                }
+                brandMonths.forEach(monthKey => {
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.textContent = formatMonthLabel(monthKey) || monthKey;
+                    const isActive = monthKey === SELECTED_MONTH;
+                    button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+                    button.addEventListener('click', () => {
+                        if (!isActive) {
+                            selectMonth(monthKey, { preserveBrand: true, brandName: SELECTED_BRAND });
+                        }
+                    });
+                    sessionBrandMonths.appendChild(button);
+                });
+            }
+
+            if (!SELECTED_MONTH || !brandMonths.includes(SELECTED_MONTH)) {
+                if (brandSessionEmpty) {
+                    brandSessionEmpty.classList.remove('hidden');
+                    brandSessionEmpty.textContent = '此品牌在選定月份暫無安排，可切換其他月份或挑選不同品牌。';
+                }
+                return;
+            }
+
+            const slots = (MOCK_SLOTS_DATA.slots || [])
+                .filter(slot => slot.brand === SELECTED_BRAND && slot.month === SELECTED_MONTH);
+
+            if (!slots.length) {
+                if (brandSessionEmpty) {
+                    brandSessionEmpty.classList.remove('hidden');
+                    brandSessionEmpty.textContent = '此品牌在選定月份暫無安排，可切換其他月份或挑選不同品牌。';
+                }
+                return;
+            }
+
+            if (brandSessionEmpty) {
+                brandSessionEmpty.classList.add('hidden');
+            }
+
+            const groupedByProject = slots.reduce((acc, slot) => {
+                if (!acc[slot.projectId]) {
+                    acc[slot.projectId] = [];
+                }
+                acc[slot.projectId].push(slot);
+                return acc;
+            }, {});
+
+            Object.entries(groupedByProject).forEach(([projectId, projectSlots]) => {
+                const projectInfo = PROJECT_MAP[projectId] || {};
+                const card = document.createElement('div');
+                card.className = 'brand-session-card';
+
+                const titleEl = document.createElement('h3');
+                titleEl.className = 'text-lg font-semibold';
+                titleEl.textContent = projectInfo.title || projectId;
+                titleEl.style.color = accent;
+
+                const countEl = document.createElement('p');
+                countEl.className = 'text-xs text-gray-500 mt-1';
+                countEl.textContent = `${projectSlots.length} 個場次`;
+
+                const list = document.createElement('ul');
+                list.className = 'mt-3 space-y-1 text-sm text-gray-600';
+                projectSlots.slice(0, 4).forEach(slot => {
+                    const li = document.createElement('li');
+                    li.textContent = slot.dealer || slot.location || '待公布經銷商';
+                    list.appendChild(li);
+                });
+                if (projectSlots.length > 4) {
+                    const more = document.createElement('li');
+                    more.className = 'text-xs text-gray-400';
+                    more.textContent = `... 另有 ${projectSlots.length - 4} 個場次`;
+                    list.appendChild(more);
+                }
+
+                const actionButton = document.createElement('button');
+                actionButton.type = 'button';
+                actionButton.className = 'mt-4 skoda-button font-semibold py-2.5 px-4 rounded-lg';
+                actionButton.textContent = '查看完整預約';
+                actionButton.style.backgroundColor = accent;
+                actionButton.style.color = '#ffffff';
+                actionButton.style.boxShadow = `0 12px 24px -16px ${accent}80`;
+                actionButton.addEventListener('click', () => openProjectSchedule(SELECTED_BRAND, projectId));
+
+                card.appendChild(titleEl);
+                card.appendChild(countEl);
+                if (projectInfo.summary) {
+                    const summaryEl = document.createElement('p');
+                    summaryEl.className = 'text-xs text-gray-500 mt-2';
+                    summaryEl.textContent = projectInfo.summary;
+                    card.appendChild(summaryEl);
+                }
+                card.appendChild(list);
+                card.appendChild(actionButton);
+
+                brandSessionList.appendChild(card);
+            });
         }
+
+
+        function renderBrandDirectory() {
+            if (!brandDirectoryContainer) return;
+
+            brandDirectoryContainer.innerHTML = '';
+            let totalMatches = 0;
+            const hasQuery = Boolean(BRAND_SEARCH_QUERY);
+
+            MONTH_ORDER.forEach(monthKey => {
+                const brands = getBrandsForMonth(monthKey);
+                const filteredBrands = brands.filter(matchesBrandQuery);
+
+                if (!filteredBrands.length && hasQuery) {
+                    return;
+                }
+
+                const expanded = DIRECTORY_COLLAPSE_STATE[monthKey] !== undefined
+                    ? DIRECTORY_COLLAPSE_STATE[monthKey]
+                    : monthKey === SELECTED_MONTH;
+
+                const label = formatMonthLabel(monthKey) || MONTH_META[monthKey]?.label || monthKey;
+                const total = brands.length;
+                const countLabel = hasQuery
+                    ? `${filteredBrands.length}/${total} 品牌符合條件`
+                    : `${total} 個品牌任務`;
+
+                const group = document.createElement('details');
+                group.className = 'brand-directory-group';
+                if (expanded) {
+                    group.setAttribute('open', '');
+                }
+
+                group.addEventListener('toggle', () => {
+                    DIRECTORY_COLLAPSE_STATE[monthKey] = group.open;
+                });
+
+                const summary = document.createElement('summary');
+                summary.className = 'brand-directory-toggle';
+
+                const infoWrapper = document.createElement('div');
+                infoWrapper.innerHTML = `
+                    <p class="text-sm font-semibold text-gray-500 uppercase tracking-wide">${label}</p>
+                    <p class="text-xs text-gray-400 mt-1">${countLabel}</p>
+                `;
+
+                const actionsWrapper = document.createElement('div');
+                actionsWrapper.className = 'brand-directory-actions';
+
+                const switchButton = document.createElement('button');
+                switchButton.type = 'button';
+                switchButton.className = 'text-xs font-semibold skoda-link';
+                if (monthKey === SELECTED_MONTH) {
+                    switchButton.textContent = '目前查看中';
+                    switchButton.classList.add('opacity-60', 'cursor-default');
+                    switchButton.disabled = true;
+                } else {
+                    switchButton.textContent = '切換至此月份';
+                    switchButton.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        selectMonth(monthKey);
+                    });
+                }
+                actionsWrapper.appendChild(switchButton);
+
+                const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                icon.setAttribute('viewBox', '0 0 20 20');
+                icon.setAttribute('fill', 'currentColor');
+                icon.setAttribute('aria-hidden', 'true');
+                icon.classList.add('w-4', 'h-4', 'text-gray-400', 'collapse-icon');
+                const iconPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                iconPath.setAttribute('fill-rule', 'evenodd');
+                iconPath.setAttribute('d', 'M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.24 4.5a.75.75 0 01-1.08 0l-4.24-4.5a.75.75 0 01.02-1.06z');
+                iconPath.setAttribute('clip-rule', 'evenodd');
+                icon.appendChild(iconPath);
+                actionsWrapper.appendChild(icon);
+
+                summary.appendChild(infoWrapper);
+                summary.appendChild(actionsWrapper);
+                group.appendChild(summary);
+
+                if (filteredBrands.length) {
+                    const list = document.createElement('div');
+                    list.className = 'brand-directory-list';
+
+                    filteredBrands.forEach(brand => {
+                        totalMatches += 1;
+                        const item = document.createElement('div');
+                        item.className = 'brand-directory-item';
+                        if (SELECTED_BRAND === brand.name && monthKey === SELECTED_MONTH) {
+                            item.dataset.active = 'true';
+                        }
+                        item.setAttribute('role', 'button');
+                        item.setAttribute('tabindex', '0');
+
+                        const info = document.createElement('div');
+                        const nameEl = document.createElement('p');
+                        nameEl.className = 'text-sm font-semibold text-gray-900';
+                        nameEl.textContent = brand.name;
+                        const originEl = document.createElement('p');
+                        originEl.className = 'text-xs text-gray-500';
+                        originEl.textContent = brand.origin;
+                        info.appendChild(nameEl);
+                        info.appendChild(originEl);
+
+                        const actionBtn = document.createElement('button');
+                        actionBtn.type = 'button';
+                        actionBtn.className = 'text-xs font-semibold';
+                        actionBtn.textContent = '查看';
+                        actionBtn.addEventListener('click', (event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            openBrandDashboard(brand.name, { month: monthKey });
+                        });
+
+                        const activate = () => {
+                            openBrandDashboard(brand.name, { month: monthKey });
+                        };
+
+                        item.addEventListener('click', activate);
+                        item.addEventListener('keydown', (event) => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault();
+                                activate();
+                            }
+                        });
+
+                        item.appendChild(info);
+                        item.appendChild(actionBtn);
+                        list.appendChild(item);
+                    });
+
+                    group.appendChild(list);
+                } else if (!hasQuery) {
+                    const emptyHint = document.createElement('p');
+                    emptyHint.className = 'text-xs text-gray-400 mt-3';
+                    emptyHint.textContent = '此月份暫無品牌安排。';
+                    group.appendChild(emptyHint);
+                }
+
+                brandDirectoryContainer.appendChild(group);
+            });
+
+            if (brandDirectoryEmpty) {
+                if (totalMatches === 0) {
+                    brandDirectoryEmpty.classList.remove('hidden');
+                } else {
+                    brandDirectoryEmpty.classList.add('hidden');
+                }
+            }
+        }
+
+
 
         function clearBrandSelection() {
             if (!CURRENT_USER.email) {
@@ -1122,47 +1751,71 @@
 
             SELECTED_BRAND = null;
             SELECTED_PROJECT = null;
-            renderBrandCards();
-            showBrandDashboardPlaceholder();
+            renderMonthSelectors();
+            renderMonthlyBrandList();
+            renderBrandSessions();
+            renderBrandDirectory();
+            renderBrandDashboard();
         }
 
-        function openBrandDashboard(brandName) {
+
+
+        function openBrandDashboard(brandName, options = {}) {
             if (!CURRENT_USER.email) {
                 showPage('login');
                 return;
             }
 
-            SELECTED_BRAND = brandName;
+            const brandMonths = BRAND_MONTH_LOOKUP[brandName] || [];
+            let targetMonth = options.month && MONTH_META[options.month] ? options.month : SELECTED_MONTH;
+            if (brandMonths.length) {
+                if (!targetMonth || !brandMonths.includes(targetMonth)) {
+                    targetMonth = brandMonths[0];
+                }
+            }
+
             SELECTED_PROJECT = null;
 
-            renderBrandCards();
-            renderBrandDashboard(brandName);
+            if (targetMonth) {
+                selectMonth(targetMonth, { preserveBrand: true, brandName: brandName });
+            } else {
+                SELECTED_BRAND = brandName;
+                renderMonthlyBrandList();
+                renderBrandSessions();
+                renderBrandDirectory();
+                renderBrandDashboard(brandName);
+            }
         }
 
-        function renderBrandDashboard(brandName) {
-            const brandInfo = BRAND_DATA.find(brand => brand.name === brandName);
+
+
+        function renderBrandDashboard(brandName = null) {
+            if (!brandDashboardContainer) return;
+
+            const brandInfo = brandName ? BRAND_DATA.find(brand => brand.name === brandName) : null;
+
             if (!brandInfo) {
-                showBrandDashboardPlaceholder();
+                brandDashboardBreadcrumb.textContent = '品牌首頁';
+                brandDashboardTitle.textContent = '尚未選擇品牌';
+                brandDashboardDescription.textContent = '請先從中央的月份清單選擇品牌，這裡會顯示品牌任務重點與建議行程。';
+                brandDashboardMeta.textContent = '選擇品牌後即可快速檢視任務摘要與建議預約。';
+                brandDashboardProjects.innerHTML = '<p class="text-sm text-gray-500">尚未載入品牌任務，請先挑選品牌。</p>';
+                brandDashboardContainer.style.borderTop = '';
+                brandDashboardTitle.style.color = '';
+                brandDashboardBreadcrumb.style.color = '';
+                if (brandDashboardResetButton) {
+                    brandDashboardResetButton.classList.add('hidden');
+                }
                 return;
             }
 
             const projects = BRAND_PROJECTS[brandName] || [];
             const upcomingSlot = getNextSlotForBrand(brandName);
-
-            brandDashboardEmpty.classList.add('hidden');
-            brandDashboardContainer.classList.remove('hidden');
-            brandDashboardContainer.style.borderTopColor = brandInfo.accent;
-            if (brandInfo.accent) {
-                brandDashboardTitle.style.color = brandInfo.accent;
-                brandDashboardBreadcrumb.style.color = `${brandInfo.accent}cc`;
-            } else {
-                brandDashboardTitle.style.color = '';
-                brandDashboardBreadcrumb.style.color = '';
-            }
+            const accent = brandInfo.accent || '#0E3B33';
 
             brandDashboardBreadcrumb.textContent = `品牌首頁 / ${brandName}`;
-            brandDashboardTitle.textContent = `${brandName} 專案儀表板`;
-            brandDashboardDescription.textContent = brandInfo.description || '';
+            brandDashboardTitle.textContent = `${brandName} 任務儀表板`;
+            brandDashboardDescription.textContent = brandInfo.description || '暫無品牌描述。';
 
             const metaParts = [];
             if (projects.length === 0) {
@@ -1173,21 +1826,38 @@
                 metaParts.push(`目前開放 ${projects.length} 個任務，尚未釋出可預約時段。`);
             }
 
-            const monthlySummary = getMonthlyAvailabilitySummary();
-            if (monthlySummary) {
-                metaParts.push(`本季配置：${monthlySummary}`);
+            const brandMonths = (BRAND_MONTH_LOOKUP[brandName] || [])
+                .map(monthKey => formatMonthLabel(monthKey))
+                .filter(Boolean)
+                .join(' / ');
+            if (brandMonths) {
+                metaParts.push(`近期月份：${brandMonths}`);
+            }
+
+            const seasonSummary = getMonthlyAvailabilitySummary();
+            if (seasonSummary) {
+                metaParts.push(`本季配置：${seasonSummary}`);
             }
 
             brandDashboardMeta.textContent = metaParts.join(' ｜ ');
 
             brandDashboardProjects.innerHTML = '';
+            brandDashboardContainer.style.borderTop = `4px solid ${accent}`;
+            brandDashboardTitle.style.color = accent;
+            brandDashboardBreadcrumb.style.color = `${accent}cc`;
+
+            if (brandDashboardResetButton) {
+                brandDashboardResetButton.classList.remove('hidden');
+            }
 
             if (projects.length === 0) {
                 brandDashboardProjects.innerHTML = '<p class="text-gray-600">目前沒有可預約的任務，請稍後再試。</p>';
                 return;
             }
 
-            projects.forEach(project => {
+            const primaryProjects = projects.slice(0, 1);
+
+            primaryProjects.forEach(project => {
                 const fragment = projectCardTemplate.content.cloneNode(true);
                 const cardRoot = fragment.querySelector('.project-card');
                 const actionButton = fragment.querySelector('button');
@@ -1196,31 +1866,55 @@
                 fragment.querySelector('.project-summary').textContent = project.summary;
                 fragment.querySelector('.project-goal').textContent = project.goal;
 
-                if (brandInfo.accent) {
-                    cardRoot.style.borderTopColor = brandInfo.accent;
-                    actionButton.style.backgroundColor = brandInfo.accent;
-                    actionButton.style.boxShadow = `0 12px 24px -16px ${brandInfo.accent}80`;
-                }
+                cardRoot.style.borderTopColor = accent;
+                actionButton.style.backgroundColor = accent;
+                actionButton.style.boxShadow = `0 12px 24px -16px ${accent}80`;
 
                 actionButton.addEventListener('click', () => openProjectSchedule(brandName, project.id));
                 brandDashboardProjects.appendChild(fragment);
             });
+
+            if (projects.length > primaryProjects.length) {
+                const quickLinks = document.createElement('div');
+                quickLinks.className = 'bg-gray-50 border border-dashed border-gray-200 rounded-xl p-4 flex flex-col gap-2';
+
+                const quickLinksLabel = document.createElement('p');
+                quickLinksLabel.className = 'text-xs font-semibold text-gray-500 uppercase tracking-wide';
+                quickLinksLabel.textContent = '更多任務';
+                quickLinks.appendChild(quickLinksLabel);
+
+                projects.slice(primaryProjects.length).forEach(project => {
+                    const quickButton = document.createElement('button');
+                    quickButton.type = 'button';
+                    quickButton.className = 'text-sm skoda-link text-left';
+                    quickButton.textContent = project.title;
+                    quickButton.addEventListener('click', () => openProjectSchedule(brandName, project.id));
+                    quickLinks.appendChild(quickButton);
+                });
+
+                brandDashboardProjects.appendChild(quickLinks);
+            }
         }
 
-        function getNextSlotForBrand(brandName) {
+
+
+        function getNextSlotForBrand(brandName, monthKey = null) {
             if (!brandName || !MOCK_SLOTS_DATA.slots) {
                 return null;
             }
 
-            const brandSlots = MOCK_SLOTS_DATA.slots
-                .filter(slot => slot.brand === brandName)
-                .sort((a, b) => {
-                    const monthCompare = (a.month || '').localeCompare(b.month || '');
-                    if (monthCompare !== 0) {
-                        return monthCompare;
-                    }
-                    return (a.dealer || '').localeCompare(b.dealer || '');
-                });
+            let brandSlots = MOCK_SLOTS_DATA.slots.filter(slot => slot.brand === brandName);
+            if (monthKey) {
+                brandSlots = brandSlots.filter(slot => slot.month === monthKey);
+            }
+
+            brandSlots.sort((a, b) => {
+                const monthCompare = (a.month || '').localeCompare(b.month || '');
+                if (monthCompare !== 0) {
+                    return monthCompare;
+                }
+                return (a.dealer || '').localeCompare(b.dealer || '');
+            });
 
             if (!brandSlots.length) {
                 return null;
@@ -1234,6 +1928,7 @@
 
             return nextSlot.dealer ? `${monthLabel} · ${nextSlot.dealer}` : monthLabel;
         }
+
 
         function openProjectSchedule(brandName, projectId) {
             const projectInfo = PROJECT_MAP[projectId];
@@ -1447,6 +2142,38 @@
         // UI 輔助函式
         // =============================================
         
+
+        function setupBrandFilters() {
+            if (brandSearchInput) {
+                brandSearchInput.addEventListener('input', (event) => {
+                    BRAND_SEARCH_QUERY = event.target.value.trim();
+                    renderMonthSelectors();
+                    renderMonthlyBrandList();
+                    renderBrandSessions();
+                    renderBrandDirectory();
+                    renderBrandDashboard(SELECTED_BRAND);
+                    updateSearchResetButton();
+                });
+            }
+
+            if (resetSearchButton) {
+                resetSearchButton.addEventListener('click', () => {
+                    BRAND_SEARCH_QUERY = '';
+                    if (brandSearchInput) {
+                        brandSearchInput.value = '';
+                        brandSearchInput.focus();
+                    }
+                    updateSearchResetButton();
+                    renderMonthSelectors();
+                    renderMonthlyBrandList();
+                    renderBrandSessions();
+                    renderBrandDirectory();
+                    renderBrandDashboard(SELECTED_BRAND);
+                });
+            }
+        }
+
+
         // 設定頁面切換
         function setupNavigation() {
             navLinkLoginPage.addEventListener('click', () => showPage('login'));
