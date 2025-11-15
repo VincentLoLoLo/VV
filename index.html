@@ -95,12 +95,30 @@
 
         .brand-card {
             cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
         }
 
-        .brand-card.selected {
-            box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.35);
-            transform: translateY(-4px);
+        .brand-card.active {
+            border-color: var(--skoda-green) !important;
+            background-color: #ecfdf5;
+            color: var(--skoda-dark-green);
+        }
+
+        .brand-card .brand-remaining {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .admin-brand-row {
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .admin-brand-row:hover {
+            background-color: #f9fafb;
+        }
+
+        .admin-brand-row.active {
+            background-color: #ecfdf5;
         }
 
         .accent-button {
@@ -148,10 +166,10 @@
                 <!-- 導航連結 (登入後) -->
                 <div id="nav-logged-in" class="hidden items-center space-x-6">
                     <span id="welcome-message" class="text-gray-700"></span>
-                    <a id="nav-link-admin-dashboard" class="nav-link font-medium text-gray-700 hidden">
+                    <a id="nav-link-admin-dashboard" href="#" class="nav-link font-medium text-gray-700 hidden">
                         管理儀表板
                     </a>
-                    <a id="nav-link-brand-home" class="nav-link font-medium text-gray-700">
+                    <a id="nav-link-brand-home" href="#" class="nav-link font-medium text-gray-700">
                         品牌首頁
                     </a>
                     <a id="logout-button" class="skoda-link">
@@ -237,71 +255,92 @@
     <!-- 頁面 2: 品牌首頁 (登入後預設顯示) -->
     <!-- =================================================== -->
     <main id="page-brand-home" class="hidden max-w-6xl mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
-        <section class="space-y-4">
-            <div>
-                <h1 class="text-3xl font-bold tracking-tight text-gray-900">選擇您要執行的品牌</h1>
-                <p class="text-gray-600 mt-2">登入後先挑選品牌，即可在同一頁檢視該品牌的任務儀表板與統計摘要。</p>
+        <section class="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 sm:p-10">
+            <div class="space-y-4">
+                <p class="text-sm font-semibold text-emerald-600 uppercase tracking-wide">神秘客入口</p>
+                <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">選擇品牌並安排任務</h1>
+                <p class="text-gray-600 text-sm sm:text-base leading-relaxed">
+                    從左側清單挑選品牌，立即檢視剩餘名額並預約合適的任務場次。
+                </p>
             </div>
-            <div id="brand-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"></div>
         </section>
 
-        <section class="space-y-4">
-            <div id="brand-dashboard-empty" class="hidden text-center text-gray-500 py-10">
-                <p class="font-semibold text-gray-600">請選擇品牌以檢視任務儀表板</p>
-                <p class="mt-2 text-sm">點擊上方任一品牌卡片，即可查看該品牌的任務目標與可預約專案。</p>
-            </div>
-            <div id="brand-dashboard" class="hidden bg-white rounded-2xl shadow-lg border-t-4">
-                <div class="p-6 pb-2 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
-                        <p class="text-sm text-gray-500" id="brand-dashboard-breadcrumb"></p>
-                        <h2 id="brand-dashboard-title" class="text-3xl font-bold tracking-tight text-gray-900"></h2>
-                        <p id="brand-dashboard-description" class="text-gray-600 mt-2"></p>
-                        <p id="brand-dashboard-meta" class="text-sm text-gray-500 mt-2"></p>
-                    </div>
-                    <button type="button" class="skoda-button-outline font-medium py-2.5 px-5 rounded-lg" onclick="clearBrandSelection()">
-                        返回品牌列表
-                    </button>
+        <section class="grid gap-6 lg:grid-cols-[minmax(220px,260px)_1fr] items-start">
+            <aside class="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 sm:p-8">
+                <div class="mb-4">
+                    <h2 class="text-xl font-semibold text-gray-900">品牌清單</h2>
+                    <p class="text-sm text-gray-500">依剩餘名額排序顯示。</p>
                 </div>
-                <div id="brand-dashboard-projects" class="p-6 pt-4 grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+                <div id="brand-grid" class="space-y-2"></div>
+                <p id="brand-list-empty" class="hidden text-sm text-gray-500 text-center">目前沒有開放預約的品牌。</p>
+            </aside>
+
+            <div class="space-y-6">
+                <div id="brand-selection-empty" class="bg-white rounded-3xl border border-dashed border-gray-200 p-10 text-gray-500">
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <h2 class="text-2xl font-semibold text-gray-900">依地區查看剩餘名額</h2>
+                            <p class="text-sm text-gray-500">先挑選想前往的區域，了解各品牌目前還有哪些空檔。</p>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <div class="inline-block min-w-full overflow-hidden rounded-3xl border border-gray-100 shadow-xl ring-1 ring-black/5">
+                                <table class="min-w-full text-sm">
+                                    <thead class="bg-white/90">
+                                        <tr class="text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                            <th class="px-6 py-4 w-52">地區概況</th>
+                                            <th class="px-6 py-4">可預約品牌與剩餘名額</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="region-overview-body" class="bg-white"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <p id="region-overview-empty" class="hidden text-sm text-gray-500 text-center">目前所有地區皆無剩餘名額，請稍後再查看。</p>
+                    </div>
+                </div>
+
+                <div id="brand-selection-panel" class="hidden">
+                    <div class="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 sm:p-8 space-y-6">
+                        <nav id="brand-selection-breadcrumb" class="flex flex-wrap items-center gap-2 text-sm text-gray-500"></nav>
+                        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                            <div class="space-y-2">
+                                <h3 id="brand-selection-title" class="text-2xl font-semibold text-gray-900"></h3>
+                                <p id="brand-selection-subtitle" class="text-sm text-gray-500"></p>
+                            </div>
+                            <span id="brand-selection-remaining" class="hidden inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-700"></span>
+                        </div>
+                        <div id="brand-availability-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                        <p id="brand-availability-empty" class="hidden text-sm text-gray-500 text-center">目前沒有開放預約的據點。</p>
+                    </div>
+                </div>
             </div>
         </section>
 
         <template id="brand-card-template">
-            <div class="brand-card h-full bg-white rounded-2xl shadow-lg p-6 flex flex-col justify-between border-t-4 transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl">
-                <div>
-                    <p class="text-sm uppercase tracking-wide font-semibold text-gray-500 mb-2">品牌</p>
-                    <h2 class="text-2xl font-bold text-gray-900 brand-name"></h2>
-                    <p class="text-sm text-gray-500 mt-1 brand-origin"></p>
-                    <p class="text-gray-600 mt-4 brand-description"></p>
+            <button type="button" class="brand-card w-full text-left px-4 py-3 rounded-2xl border border-gray-200 bg-white shadow-sm hover:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <div class="flex flex-col">
+                    <span class="text-xs font-medium tracking-wide brand-origin"></span>
+                    <span class="text-lg font-semibold brand-name"></span>
+                    <span class="text-sm text-gray-500 brand-remaining"></span>
                 </div>
-                <div class="mt-6 flex flex-col gap-2 text-sm text-gray-500">
-                    <span class="brand-project-count"></span>
-                    <span class="brand-next-slot"></span>
-                </div>
-                <button type="button" class="mt-6 accent-button font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center">
-                    查看品牌儀表板
-                </button>
-            </div>
+            </button>
         </template>
-
-        <template id="project-card-template">
-            <div class="project-card bg-white rounded-2xl shadow-lg p-6 flex flex-col justify-between border-t-4">
-                <div>
-                    <p class="text-sm font-semibold text-gray-500 mb-2 project-category"></p>
-                    <h3 class="text-2xl font-bold text-gray-900 project-title"></h3>
-                    <p class="text-gray-600 mt-3 project-summary"></p>
-                    <div class="mt-4 bg-gray-50 border border-gray-100 rounded-lg p-4">
-                        <p class="text-sm font-semibold text-gray-700">任務目標</p>
-                        <p class="text-sm text-gray-600 mt-1 project-goal"></p>
+        <template id="experience-card-template">
+            <button type="button" class="experience-card w-full text-left px-5 py-4 rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <div class="flex items-start justify-between gap-6">
+                    <div class="space-y-1">
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide experience-region"></p>
+                        <h4 class="text-lg font-semibold text-gray-900 experience-project"></h4>
+                        <p class="text-sm text-gray-500 experience-dealer"></p>
+                    </div>
+                    <div class="text-right">
+                        <span class="experience-remaining inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"></span>
+                        <p class="experience-next text-xs text-gray-400 mt-2"></p>
                     </div>
                 </div>
-                <button type="button" class="mt-6 accent-button font-semibold py-2.5 px-4 rounded-lg flex items-center justify-center">
-                    查看可預約時段
-                </button>
-            </div>
+            </button>
         </template>
     </main>
-
     <!-- =================================================== -->
     <!-- 頁面 3: 管理儀表板 (僅管理員可見) -->
     <!-- =================================================== -->
@@ -309,7 +348,7 @@
         <section class="space-y-4">
             <div>
                 <h1 class="text-3xl font-bold tracking-tight text-gray-900">管理儀表板總覽</h1>
-                <p class="text-gray-600 mt-2">集中掌握各品牌任務開案、剩餘時段與月份分佈，協助調整人力與預算。</p>
+                <p class="text-gray-600 mt-2">集中掌握各品牌任務開案、剩餘時段與月份分佈；第一層呈現關鍵 KPI，第二層可深入查看品牌詳細數據並快速調整資源。</p>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
                 <div class="bg-white rounded-2xl shadow-lg p-6 border-t-4 border-emerald-500">
@@ -340,6 +379,7 @@
                 <div>
                     <h2 class="text-2xl font-bold text-gray-900">品牌任務概況</h2>
                     <p class="text-sm text-gray-500 mt-1">依品牌檢視任務數量、剩餘名額與最近時段。</p>
+                    <p class="text-xs text-gray-400 mt-2">點擊任一品牌列以開啟詳細數據儀表板。</p>
                 </div>
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">
                     即時更新
@@ -381,6 +421,92 @@
                 <p id="admin-monthly-empty" class="hidden text-sm text-gray-500 text-center">尚未建立任何月份的任務。</p>
             </div>
         </section>
+        <section id="admin-brand-detail" class="hidden space-y-6">
+            <div id="admin-brand-detail-card" class="bg-white rounded-3xl shadow-lg border-t-4">
+                <div class="p-6 sm:p-8 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+                    <div class="space-y-2">
+                        <p id="admin-brand-detail-breadcrumb" class="text-sm text-gray-500"></p>
+                        <h2 id="admin-brand-detail-title" class="text-3xl font-bold tracking-tight text-gray-900"></h2>
+                        <p id="admin-brand-detail-description" class="text-gray-600"></p>
+                    </div>
+                    <button type="button" class="skoda-button-outline font-medium py-2.5 px-5 rounded-lg self-start" onclick="closeAdminBrandDetail()">返回品牌總覽</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-6 sm:p-8 border-t border-gray-100">
+                    <div class="bg-emerald-50 text-emerald-800 rounded-2xl p-4">
+                        <p class="text-xs font-semibold uppercase tracking-wide">剩餘時段</p>
+                        <p id="admin-brand-detail-remaining" class="text-2xl font-bold mt-2">0</p>
+                        <p class="text-xs text-emerald-700 mt-1">尚未被預約的時段。</p>
+                    </div>
+                    <div class="bg-sky-50 text-sky-800 rounded-2xl p-4">
+                        <p class="text-xs font-semibold uppercase tracking-wide">已預約</p>
+                        <p id="admin-brand-detail-booked" class="text-2xl font-bold mt-2">0</p>
+                        <p class="text-xs text-sky-700 mt-1">已由神秘客預約的時段。</p>
+                    </div>
+                    <div class="bg-amber-50 text-amber-800 rounded-2xl p-4">
+                        <p class="text-xs font-semibold uppercase tracking-wide">預約完成率</p>
+                        <p id="admin-brand-detail-utilization" class="text-2xl font-bold mt-2">0%</p>
+                        <p class="text-xs text-amber-700 mt-1">已預約時段佔全部釋出時段比例。</p>
+                    </div>
+                    <div class="bg-rose-50 text-rose-800 rounded-2xl p-4">
+                        <p class="text-xs font-semibold uppercase tracking-wide">最近可預約</p>
+                        <p id="admin-brand-detail-next" class="text-lg font-semibold mt-2">尚未開放</p>
+                        <p class="text-xs text-rose-700 mt-1">距今最近的剩餘時段。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 sm:p-8 space-y-6">
+                <div class="flex flex-col gap-2">
+                    <h3 class="text-xl font-semibold text-gray-900">專案狀態</h3>
+                    <p class="text-sm text-gray-500">追蹤各任務類型的剩餘名額與最近時段。</p>
+                </div>
+                <div id="admin-brand-detail-projects" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+                <p id="admin-brand-detail-projects-empty" class="hidden text-sm text-gray-500 text-center">目前沒有任何任務可供預約。</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 sm:p-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-semibold text-gray-900">區域剩餘名額</h3>
+                        <span class="text-xs font-medium text-gray-500">依縣市統計</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-100">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">縣市</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">剩餘名額</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">占比</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-brand-detail-region-body" class="divide-y divide-gray-100 bg-white"></tbody>
+                        </table>
+                    </div>
+                    <p id="admin-brand-detail-region-empty" class="hidden text-sm text-gray-500 text-center mt-4">目前沒有剩餘名額。</p>
+                </div>
+                <div class="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 sm:p-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-semibold text-gray-900">據點詳情</h3>
+                        <span class="text-xs font-medium text-gray-500">含任務類型</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-100">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">據點</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">縣市</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">剩餘名額</th>
+                                    <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">最近時段</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-brand-detail-dealer-body" class="divide-y divide-gray-100 bg-white"></tbody>
+                        </table>
+                    </div>
+                    <p id="admin-brand-detail-dealer-empty" class="hidden text-sm text-gray-500 text-center mt-4">此品牌沒有剩餘時段。</p>
+                </div>
+            </div>
+        </section>
+
 
         <p class="text-xs text-gray-400">以上資料為模擬示意，正式環境請串接後端任務與預約狀態。</p>
     </main>
@@ -388,55 +514,88 @@
     <!-- =================================================== -->
     <!-- 頁面 4: 預約時段 (預設隱藏) -->
     <!-- =================================================== -->
-    <main id="page-booking" class="hidden max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
-
-        <!-- 頁面標題 -->
-        <p class="text-sm text-gray-500 mb-2" id="booking-breadcrumb"></p>
-        <h1 id="booking-title" class="text-3xl font-bold tracking-tight text-gray-900 mb-2">可預約的時段</h1>
-        <p id="booking-intro" class="text-gray-600"></p>
-        <div id="booking-goal" class="mb-6 bg-white border border-gray-100 rounded-2xl p-5 shadow-sm hidden">
-            <p class="text-sm font-semibold text-gray-700">任務重點</p>
-            <p id="booking-goal-text" class="text-sm text-gray-600 mt-2"></p>
-        </div>
-        
-        <!-- 全螢幕載入指示 -->
-        <div id="loading-container" class="flex flex-col items-center justify-center py-20">
-            <div class="loader"></div>
-            <p class="mt-4 text-gray-600">正在載入可預約時段...</p>
+    <main id="page-booking" class="hidden max-w-6xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <nav id="booking-breadcrumb" class="flex flex-wrap items-center gap-2 text-sm text-gray-500"></nav>
+            <button type="button" id="booking-back-button" class="hidden skoda-button-outline font-medium py-2 px-4 rounded-lg">
+                返回上一頁
+            </button>
         </div>
 
-        <!-- 錯誤訊息顯示區 -->
-        <div id="error-container" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-6" role="alert">
-            <strong class="font-bold">載入失敗！</strong>
-            <span class="block sm:inline" id="error-message">無法從伺服器獲取資料，請稍後再試。</span>
-        </div>
-
-        <!-- 時段卡片容器 -->
-        <div id="slots-container" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            
-            <!-- JavaScript 渲染範本 (這是一個隱藏的範本) -->
-            <template id="slot-card-template">
-                <div class="slot-card bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl">
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="data-project text-xl font-bold"></span>
-                            <span class="data-month text-sm font-semibold px-3 py-1 rounded-full accent-badge"></span>
-                        </div>
-                        <p class="data-dealer text-base font-semibold text-gray-700"></p>
-                        <p class="data-location text-sm text-gray-500 mb-4"></p>
-
-                        <div class="bg-gray-50 p-4 rounded-lg mb-4">
-                            <p class="text-sm font-semibold text-gray-800">任務重點：</p>
-                            <p class="data-details text-sm text-gray-600"></p>
-                        </div>
-
-                        <button class="book-button w-full accent-button font-bold py-3 px-4 rounded-lg focus:outline-none">
-                            立即預約
-                        </button>
-                    </div>
+        <section class="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] items-start">
+            <article class="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
+                <div class="relative">
+                    <img id="experience-vehicle-image" src="" alt="車款示意圖" class="w-full h-64 object-cover">
+                    <div id="experience-vehicle-class" class="absolute top-4 left-4 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-black bg-opacity-60 text-white"></div>
                 </div>
-            </template>
-        </div>
+                <div class="p-6 sm:p-8 space-y-6">
+                    <header class="space-y-2">
+                        <h1 id="experience-title" class="text-3xl font-bold tracking-tight text-gray-900"></h1>
+                        <p id="experience-dealer" class="text-base font-semibold text-gray-700"></p>
+                        <p id="experience-location" class="text-sm text-gray-500"></p>
+                    </header>
+
+                    <section class="grid gap-4 sm:grid-cols-2">
+                        <div class="bg-emerald-50 text-emerald-800 rounded-2xl p-5">
+                            <p class="text-xs font-semibold uppercase tracking-wide">適合族群</p>
+                            <p id="experience-usage" class="text-sm mt-2"></p>
+                        </div>
+                        <div class="bg-sky-50 text-sky-800 rounded-2xl p-5">
+                            <p class="text-xs font-semibold uppercase tracking-wide">車款介紹</p>
+                            <p id="experience-vehicle-summary" class="text-sm mt-2"></p>
+                        </div>
+                    </section>
+
+                    <section class="space-y-3">
+                        <h2 class="text-xl font-semibold text-gray-900">任務重點</h2>
+                        <p id="experience-mission" class="text-sm text-gray-600"></p>
+                        <ul id="experience-highlights" class="space-y-2"></ul>
+                    </section>
+
+                    <section class="space-y-3">
+                        <h2 class="text-xl font-semibold text-gray-900">注意事項</h2>
+                        <ul id="experience-cautions" class="space-y-2"></ul>
+                    </section>
+
+                    <section class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-xl font-semibold text-gray-900">車型建議與預算</h2>
+                            <span id="experience-remaining-badge" class="hidden inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700"></span>
+                        </div>
+                        <div id="experience-trims" class="grid gap-4 sm:grid-cols-2"></div>
+                    </section>
+                </div>
+            </article>
+
+            <aside class="space-y-4">
+                <div class="bg-white rounded-3xl shadow-lg border border-gray-100 p-6 space-y-4">
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-900">可預約場次</h2>
+                        <p id="experience-next-slot" class="text-sm text-gray-500 mt-1"></p>
+                    </div>
+                    <div id="loading-container" class="flex flex-col items-center justify-center py-12">
+                        <div class="loader"></div>
+                        <p class="mt-4 text-gray-600">正在載入可預約時段...</p>
+                    </div>
+                    <div id="error-container" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg" role="alert">
+                        <strong class="font-bold">載入失敗！</strong>
+                        <span class="block sm:inline" id="error-message">無法從伺服器獲取資料，請稍後再試。</span>
+                    </div>
+                    <div id="slots-container" class="hidden space-y-3"></div>
+                    <p id="slots-empty" class="hidden text-sm text-gray-500">太棒了！所有時段皆已預約完畢。</p>
+                </div>
+            </aside>
+        </section>
+
+        <template id="slot-item-template">
+            <div class="slot-item flex items-center justify-between gap-4 border border-gray-200 rounded-xl px-4 py-3 bg-gray-50">
+                <div>
+                    <p class="slot-month text-sm font-semibold text-gray-800"></p>
+                    <p class="slot-detail text-xs text-gray-500"></p>
+                </div>
+                <button type="button" class="book-button accent-button font-semibold py-2 px-4 rounded-lg">預約</button>
+            </div>
+        </template>
     </main>
 
     <!-- =================================================== -->
@@ -640,6 +799,81 @@
             return `${year} 年 ${month} 月`;
         }
 
+        function extractCityFromLocation(locationText) {
+            if (!locationText) {
+                return '未分類';
+            }
+            const parts = locationText.split('｜');
+            const address = (parts[1] || parts[0] || '').trim();
+            const cityMatch = address.match(/^[\u4e00-\u9fa5]{2,3}(市|縣)/);
+            if (cityMatch) {
+                return cityMatch[0];
+            }
+            const fallback = (parts[0] || '').trim();
+            const fallbackMatch = fallback.match(/^[\u4e00-\u9fa5]{2,3}/);
+            if (fallbackMatch) {
+                const label = fallbackMatch[0];
+                if (label.endsWith('市') || label.endsWith('縣')) {
+                    return label;
+                }
+                return `${label}市`;
+            }
+            return '未分類';
+        }
+
+        function detectRegionFromSlot(slot) {
+            if (!slot) {
+                return '未分類';
+            }
+            const city = extractCityFromLocation(slot.location || '');
+            if (city && city !== '未分類') {
+                return city;
+            }
+            const source = `${slot.dealer || ''} ${slot.location || ''}`;
+            const match = source.match(/[\u4e00-\u9fa5]{2,3}(市|縣)/);
+            return match ? match[0] : '未分類';
+        }
+
+        const CITY_REGION_MAP = {
+            '台北市': '北部',
+            '新北市': '北部',
+            '桃園市': '北部',
+            '基隆市': '北部',
+            '新竹市': '北部',
+            '新竹縣': '北部',
+            '宜蘭縣': '東部',
+            '花蓮縣': '東部',
+            '台東縣': '東部',
+            '台中市': '中部',
+            '彰化市': '中部',
+            '彰化縣': '中部',
+            '苗栗縣': '中部',
+            '南投縣': '中部',
+            '雲林縣': '中部',
+            '嘉義市': '南部',
+            '嘉義縣': '南部',
+            '台南市': '南部',
+            '高雄市': '南部',
+            '屏東縣': '南部',
+            '屏東市': '南部'
+        };
+
+        function mapCityToRegion(city) {
+            if (!city || city === '未分類') {
+                return '未分類';
+            }
+            const normalized = city.replace(/\s+/g, '');
+            return CITY_REGION_MAP[normalized] || '未分類';
+        }
+
+        function buildDealerKey(brandName, dealer, location) {
+            return `${brandName || ''}||${dealer || ''}||${location || ''}`;
+        }
+
+        function buildExperienceKey(brandName, projectId, dealer, location) {
+            return `${brandName || ''}||${projectId || ''}||${dealer || ''}||${location || ''}`;
+        }
+
         const BRAND_DATA = [
             { name: 'MAZDA', origin: '日本 / 台灣馬自達', description: '聚焦在以人為本的經典駕馭體驗與客製化賞車流程。', accent: '#BF1E2E' },
             { name: 'Škoda', origin: '捷克 / 歐洲進口', description: '強調 Simply Clever 的驚喜細節與全方位的家庭用車情境。', accent: '#0E3B33' },
@@ -652,33 +886,290 @@
             { name: 'Hyundai', origin: '韓國 / 南陽實業', description: '評估現代汽車新能源與家庭休旅的展間服務節奏。', accent: '#002A5C' }
         ];
 
+        const BRAND_ACCENT_MAP = BRAND_DATA.reduce((acc, brand) => {
+            acc[brand.name] = brand.accent || '#0E3B33';
+            return acc;
+        }, {});
+
         const BRAND_PROJECTS = {
             'MAZDA': [
-                { id: 'mazda-cx5', title: 'CX-5 暖心家庭體驗', category: '家庭賞車', summary: '針對家庭客層進行 CX-5 空間與安全配備說明觀察。', goal: '評估展間人員是否主動協助安裝兒童座椅、介紹 i-ACTIVSENSE 配備與後續保修服務。' }
+                {
+                    id: 'mazda-cx5',
+                    title: 'CX-5 暖心家庭體驗',
+                    category: '家庭賞車',
+                    summary: '針對家庭客層進行 CX-5 空間與安全配備說明觀察。',
+                    goal: '評估展間人員是否主動協助安裝兒童座椅、介紹 i-ACTIVSENSE 配備與後續保修服務。',
+                    vehicle: {
+                        image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80',
+                        imageAlt: 'Mazda CX-5 展示車',
+                        segment: '智慧家庭休旅',
+                        usage: '適合重視安全科技與乘坐舒適度的年輕家庭。',
+                        summary: 'CX-5 採用 Skyactiv 車體結構搭配 i-ACTIVSENSE 主動安全科技，兼具操控與實用機能。',
+                        trims: [
+                            { name: 'Skyactiv-G 尊榮型', price: 'NT$ 1,099,000', highlight: '2.0L 汽油動力 · i-ACTIVSENSE 標配 · 適合都會家庭使用' },
+                            { name: 'Signature 旗艦型', price: 'NT$ 1,259,000', highlight: '真皮內裝 · Bose 音響 · 適合假日長途旅行' }
+                        ]
+                    },
+                    details: {
+                        briefing: [
+                            '觀察銷售是否主動介紹 i-ACTIVSENSE 主動安全功能並提供實際示範。',
+                            '詢問兒童座椅安裝與置物空間運用，記錄銷售提供的建議與補充配件。',
+                            '確認保修方案、保固期間與回廠維修流程是否講解完整。'
+                        ],
+                        cautions: [
+                            '避免直接詢問折扣金額，維持一般家庭探訪口吻。',
+                            '留意銷售是否詢問家庭成員組成並提供客製化建議。'
+                        ]
+                    }
+                }
             ],
             'Škoda': [
-                { id: 'skoda-kodiaq', title: 'Kodiaq 旗艦七人座任務', category: '旗艦 SUV', summary: '模擬高階主管考察 Kodiaq 4x4 的全方位接待流程。', goal: '觀察銷售顧問是否提出七人座家庭情境建議並完整示範 Simply Clever 配備。' }
+                {
+                    id: 'skoda-kodiaq',
+                    title: 'Kodiaq 旗艦七人座任務',
+                    category: '旗艦 SUV',
+                    summary: '模擬高階主管考察 Kodiaq 4x4 的全方位接待流程。',
+                    goal: '觀察銷售顧問是否提出七人座家庭情境建議並完整示範 Simply Clever 配備。',
+                    vehicle: {
+                        image: 'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1200&q=80',
+                        imageAlt: 'Škoda Kodiaq 展示車',
+                        segment: '七人座智慧休旅',
+                        usage: '適合需要靈活座椅與大容量置物的家庭或主管通勤。',
+                        summary: 'Kodiaq 主打 Simply Clever 收納巧思與 4x4 穩定底盤，兼顧豪華質感與機能。',
+                        trims: [
+                            { name: 'Style 2.0 TSI', price: 'NT$ 1,399,000', highlight: '七座設定 · 具備 Travel Assist 與全速域 ACC' },
+                            { name: 'Sportline 4x4', price: 'NT$ 1,599,000', highlight: '4x4 四輪驅動 · 黑化套件 · 適合戶外移動' }
+                        ]
+                    },
+                    details: {
+                        briefing: [
+                            '確認銷售是否主動介紹第二、三排滑移與傾倒機構，並示範快速收折。',
+                            '評估顧問對 Kodiaq 安全科技如 Side Assist、Front Assist 的解說深度。',
+                            '詢問保固、保養與高里程客戶的維護建議，觀察回應是否具體。'
+                        ],
+                        cautions: [
+                            '記錄銷售是否提供實際家庭情境，例如長途旅行或多人通勤安排。',
+                            '若安排試駕，注意顧問是否提醒車輛高度與轉彎死角。'
+                        ]
+                    }
+                }
             ],
             'Toyota': [
-                { id: 'toyota-corolla-cross', title: 'Corolla Cross 熱銷流程', category: '高銷量 SUV', summary: '體驗熱門車款的排隊賞車及試乘節奏。', goal: '確認現場動線安排、候車動態更新與追加配件溝通是否透明。' }
+                {
+                    id: 'toyota-corolla-cross',
+                    title: 'Corolla Cross 熱銷流程',
+                    category: '高銷量 SUV',
+                    summary: '體驗熱門車款的排隊賞車及試乘節奏。',
+                    goal: '確認現場動線安排、候車動態更新與追加配件溝通是否透明。',
+                    vehicle: {
+                        image: 'https://images.unsplash.com/photo-1611599532478-3f0c54b8d777?auto=format&fit=crop&w=1200&q=80',
+                        imageAlt: 'Toyota Corolla Cross 展示車',
+                        segment: '國民跨界休旅',
+                        usage: '適合通勤與家庭採買，強調油耗與空間平衡。',
+                        summary: 'Corolla Cross 採用 TNGA 底盤與豐富主被動安全，提供汽油與油電雙動力選擇。',
+                        trims: [
+                            { name: '豪華版', price: 'NT$ 839,000', highlight: 'TSS 2.0 智動駕駛輔助 · 8 吋多媒體 · 適合日常通勤' },
+                            { name: 'Hybrid 旗艦版', price: 'NT$ 1,030,000', highlight: '油電複合動力 · HUD 抬頭顯示 · 適合長程節能使用' }
+                        ]
+                    },
+                    details: {
+                        briefing: [
+                            '確認銷售是否主動告知候車時間與排隊流程，並提供備用方案。',
+                            '詢問加價配件與保養方案，觀察是否提供透明的價格表。',
+                            '記錄展示車是否提供完整消毒與試乘前安全提醒。'
+                        ],
+                        cautions: [
+                            '維持熱門車款買家視角，避免一次詢問過多車型。',
+                            '注意銷售是否主動建立聯絡機制與後續追蹤。'
+                        ]
+                    }
+                }
             ],
             'Volvo': [
-                { id: 'volvo-xc40', title: 'XC40 Recharge 都會純電', category: '豪華純電', summary: '針對都會通勤設定評估純電 SUV 的介紹深度。', goal: '檢核安全科技解說、Digital Services 示範與充電資源介紹。' }
+                {
+                    id: 'volvo-xc40',
+                    title: 'XC40 Recharge 都會純電',
+                    category: '豪華純電',
+                    summary: '針對都會通勤設定評估純電 SUV 的介紹深度。',
+                    goal: '檢核安全科技解說、Digital Services 示範與充電資源介紹。',
+                    vehicle: {
+                        image: 'https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=1200&q=80',
+                        imageAlt: 'Volvo XC40 Recharge 展示車',
+                        segment: '北歐純電休旅',
+                        usage: '適合都會通勤與週末遠行，強調安全與數位服務整合。',
+                        summary: 'XC40 Recharge 採用雙馬達四驅與 Google Built-in 介面，提供先進的安全輔助與互聯功能。',
+                        trims: [
+                            { name: 'Twin Motor', price: 'NT$ 2,190,000', highlight: '408 匹馬力 · 418 公里續航 · 內建 Google Assistant' },
+                            { name: 'Single Motor Extended', price: 'NT$ 1,890,000', highlight: '前驅配置 · 460 公里續航 · 更適合長距離通勤' }
+                        ]
+                    },
+                    details: {
+                        briefing: [
+                            '觀察銷售是否解釋充電方案、家用安裝流程與公共充電資源。',
+                            '確認 Pilot Assist 與 City Safety 的示範內容是否完整。',
+                            '詢問 Digital Services 訂閱細節與軟體更新頻率。'
+                        ],
+                        cautions: [
+                            '留意銷售是否主動評估買家日常里程並給予充電建議。',
+                            '若安排試駕，注意能否示範單踏板駕馭與動能回收強度。'
+                        ]
+                    }
+                }
             ],
             'Audi': [
-                { id: 'audi-q4', title: 'Q4 e-tron 科技體驗', category: '豪華純電', summary: '測試 Audi 智慧座艙的沉浸式導覽。', goal: '確認銷售顧問是否完成 MMI 功能示範與試駕安全提醒。' }
+                {
+                    id: 'audi-q4',
+                    title: 'Q4 e-tron 科技體驗',
+                    category: '豪華純電',
+                    summary: '測試 Audi 智慧座艙的沉浸式導覽。',
+                    goal: '確認銷售顧問是否完成 MMI 功能示範與試駕安全提醒。',
+                    vehicle: {
+                        image: 'https://images.unsplash.com/photo-1605559424843-9e4c5f9c7d1c?auto=format&fit=crop&w=1200&q=80',
+                        imageAlt: 'Audi Q4 e-tron 展示車',
+                        segment: '豪華純電跨界',
+                        usage: '適合重視科技座艙與品牌體驗的都會菁英。',
+                        summary: 'Q4 e-tron 採用 MEB 純電平台，結合 AR HUD、MMI Touch 與 quattro 電子四驅科技。',
+                        trims: [
+                            { name: '35 e-tron advanced', price: 'NT$ 1,859,000', highlight: '後驅 170hp · 52 kWh 電池 · 都會通勤首選' },
+                            { name: '50 e-tron quattro', price: 'NT$ 2,359,000', highlight: '四驅 299hp · AR 擴增實境 HUD · 長途旅行更安心' }
+                        ]
+                    },
+                    details: {
+                        briefing: [
+                            '確認銷售是否示範 MMI 導航、語音助理與智慧手機連線功能。',
+                            '詢問充電規劃、預約保養與原廠服務計畫，觀察是否有個人化建議。',
+                            '觀察展間是否安排專屬交車區與品牌體驗導覽。'
+                        ],
+                        cautions: [
+                            '留意銷售是否主動介紹 e-tron 專屬售後資源，例如 24H 救援。',
+                            '若安排試駕，確認是否提醒動能回收段位與安全注意事項。'
+                        ]
+                    }
+                }
             ],
             'Honda': [
-                { id: 'honda-crv', title: 'CR-V 家庭試駕', category: '家庭賞車', summary: '體驗全新世代 CR-V 試駕流程與候車體驗。', goal: '觀察人員對 Honda Sensing、安全配備與保固方案的介紹完整度。' }
+                {
+                    id: 'honda-crv',
+                    title: 'CR-V 家庭試駕',
+                    category: '家庭賞車',
+                    summary: '體驗全新世代 CR-V 試駕流程與候車體驗。',
+                    goal: '觀察人員對 Honda Sensing、安全配備與保固方案的介紹完整度。',
+                    vehicle: {
+                        image: 'https://images.unsplash.com/photo-1610465299996-26e4dd98ecff?auto=format&fit=crop&w=1200&q=80',
+                        imageAlt: 'Honda CR-V 展示車',
+                        segment: '家庭休旅',
+                        usage: '適合需要大空間與節能動力的家庭用戶。',
+                        summary: '全新 CR-V 導入更大車室、第二排滑移座椅與 Honda Sensing 360，強調安全與便利。',
+                        trims: [
+                            { name: '1.5 VTi-S', price: 'NT$ 1,048,000', highlight: '渦輪動力 · Honda Sensing 標配 · 適合日常代步' },
+                            { name: 'e:HEV Prestige', price: 'NT$ 1,248,000', highlight: '油電系統 · 電子線傳排檔 · 適合長途省油需求' }
+                        ]
+                    },
+                    details: {
+                        briefing: [
+                            '確認銷售是否講解第二排滑移與後行李空間運用，並提供家庭情境。',
+                            '詢問 Honda Sensing 功能差異與維修成本，觀察說明是否具體。',
+                            '記錄試駕路線、候車環境與茶點服務是否完善。'
+                        ],
+                        cautions: [
+                            '留意銷售是否主動提醒油電車型保養差異與電池保固。',
+                            '保持家庭買家角色，可關心兒童乘坐或寵物配置需求。'
+                        ]
+                    }
+                }
             ],
             'Ford': [
-                { id: 'ford-kuga', title: 'Kuga 智能駕馭任務', category: '油電 SUV', summary: '以都會家庭視角評估 Kuga 油電休旅的體驗流程。', goal: '確認顧問是否主動介紹 Co-Pilot360 與 FordPass 互聯服務。' }
+                {
+                    id: 'ford-kuga',
+                    title: 'Kuga 智能駕馭任務',
+                    category: '油電 SUV',
+                    summary: '以都會家庭視角評估 Kuga 油電休旅的體驗流程。',
+                    goal: '確認顧問是否主動介紹 Co-Pilot360 與 FordPass 互聯服務。',
+                    vehicle: {
+                        image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1200&q=80',
+                        imageAlt: 'Ford Kuga 展示車',
+                        segment: '智慧油電休旅',
+                        usage: '適合重視操控與科技配備的年輕家庭。',
+                        summary: 'Kuga 具備 2.5L 油電動力、AWD 選項與 Co-Pilot360 智能駕駛輔助，強調運動化與安全並重。',
+                        trims: [
+                            { name: 'EcoBoost 180 旗馳型', price: 'NT$ 979,000', highlight: '1.5L 渦輪 · Co-Pilot360 標配 · 適合日常通勤' },
+                            { name: 'EcoBoost 250 ST-Line', price: 'NT$ 1,198,000', highlight: 'AWD 四驅 · 運動化外觀套件 · 適合長途旅行' }
+                        ]
+                    },
+                    details: {
+                        briefing: [
+                            '確認銷售是否示範 FordPass App 與遠端控制功能。',
+                            '詢問油電保養與充電（若 PHEV）的注意事項，觀察回覆是否明確。',
+                            '試駕時留意銷售是否解說 Co-Pilot360 各項輔助介入條件。'
+                        ],
+                        cautions: [
+                            '保持運動化家庭買家設定，可關心性能與油耗平衡。',
+                            '記錄銷售是否提供保險、延長保固等加值服務的資訊。'
+                        ]
+                    }
+                }
             ],
             'Volkswagen': [
-                { id: 'vw-tiguan', title: 'Tiguan Life 智慧互聯', category: '德系休旅', summary: '聚焦 Tiguan Life 互聯科技與家庭實用配備的導覽。', goal: '觀察顧問對 IQ.Drive 功能與保固維修方案的溝通完整度。' }
+                {
+                    id: 'vw-tiguan',
+                    title: 'Tiguan Life 智慧互聯',
+                    category: '德系休旅',
+                    summary: '聚焦 Tiguan Life 互聯科技與家庭實用配備的導覽。',
+                    goal: '觀察顧問對 IQ.Drive 功能與保固維修方案的溝通完整度。',
+                    vehicle: {
+                        image: 'https://images.unsplash.com/photo-1603384695633-9d6672f0c092?auto=format&fit=crop&w=1200&q=80',
+                        imageAlt: 'Volkswagen Tiguan 展示車',
+                        segment: '歐系智慧休旅',
+                        usage: '適合重視歐系操控與互聯科技的家庭旅遊族群。',
+                        summary: 'Tiguan 搭載 IQ.Drive 智能輔助與 12 吋全數位座艙，提供靈活座椅與豐富安全配備。',
+                        trims: [
+                            { name: '280 TSI Life', price: 'NT$ 1,168,000', highlight: 'IQ.Drive 輔助 · Discover Pro 9.2 吋主機' },
+                            { name: '330 TSI Elegance', price: 'NT$ 1,288,000', highlight: '4Motion 四驅 · 鋁合金套件 · 適合長程自駕' }
+                        ]
+                    },
+                    details: {
+                        briefing: [
+                            '確認銷售是否示範 IQ.Drive 操作並說明 ACC、車道維持限制。',
+                            '詢問 5+2 年保固與定保方案，觀察資訊是否清楚。',
+                            '檢視後座與行李廂變化示範是否完整，包含滑移與分離傾倒。'
+                        ],
+                        cautions: [
+                            '留意銷售是否主動介紹車聯網 We Connect 功能與年費。',
+                            '保持歐系家庭買家角度，可關心海外旅行載物與安全配備。'
+                        ]
+                    }
+                }
             ],
             'Hyundai': [
-                { id: 'hyundai-ioniq5', title: 'IONIQ 5 科技生活體驗', category: '純電跨界', summary: '以科技家庭為設定，檢視 IONIQ 5 的展示與交付流程。', goal: '評估顧問如何說明 V2L、充電資源與智慧安全科技。' }
+                {
+                    id: 'hyundai-ioniq5',
+                    title: 'IONIQ 5 科技生活體驗',
+                    category: '純電跨界',
+                    summary: '以科技家庭為設定，檢視 IONIQ 5 的展示與交付流程。',
+                    goal: '評估顧問如何說明 V2L、充電資源與智慧安全科技。',
+                    vehicle: {
+                        image: 'https://images.unsplash.com/photo-1620891549027-019d98aa4301?auto=format&fit=crop&w=1200&q=80',
+                        imageAlt: 'Hyundai IONIQ 5 展示車',
+                        segment: '純電跨界休旅',
+                        usage: '適合科技家庭與露營族，強調車內供電與快充能力。',
+                        summary: 'IONIQ 5 採 E-GMP 平台、800V 高壓快充與 V2L 供電功能，營造未來感座艙。',
+                        trims: [
+                            { name: 'Elite', price: 'NT$ 1,599,000', highlight: '後驅 58 kWh · 400V 快充 · 適合都會往返' },
+                            { name: 'Performance AWD', price: 'NT$ 1,889,000', highlight: '雙馬達四驅 · 77.4 kWh · 支援 800V 超高速充電' }
+                        ]
+                    },
+                    details: {
+                        briefing: [
+                            '確認銷售是否解說充電等級、家用充電安裝時程與合作廠商。',
+                            '請對方示範 V2L 對外供電操作與安全注意事項。',
+                            '觀察交付說明是否包含 OTA 更新、保固與道路救援。'
+                        ],
+                        cautions: [
+                            '留意銷售是否提供實際耗電量與冬季里程資訊。',
+                            '保持科技生活族視角，可詢問與智慧家庭設備的整合。'
+                        ]
+                    }
+                }
             ]
         };
 
@@ -802,6 +1293,24 @@
         // [開發者註記] 模擬資料庫
         const INITIAL_SLOTS = buildSlotsFromAvailability(PROJECT_AVAILABILITY);
         const TOTAL_INITIAL_SLOTS = INITIAL_SLOTS.length;
+        const INITIAL_SLOTS_BY_BRAND = INITIAL_SLOTS.reduce((acc, slot) => {
+            acc[slot.brand] = (acc[slot.brand] || 0) + 1;
+            return acc;
+        }, {});
+        const INITIAL_SLOTS_BY_PROJECT = INITIAL_SLOTS.reduce((acc, slot) => {
+            acc[slot.projectId] = (acc[slot.projectId] || 0) + 1;
+            return acc;
+        }, {});
+        const INITIAL_SLOTS_BY_DEALER = INITIAL_SLOTS.reduce((acc, slot) => {
+            const key = `${slot.brand}||${slot.dealer}`;
+            acc[key] = (acc[key] || 0) + 1;
+            return acc;
+        }, {});
+        const INITIAL_SLOTS_BY_EXPERIENCE = INITIAL_SLOTS.reduce((acc, slot) => {
+            const key = buildExperienceKey(slot.brand, slot.projectId, slot.dealer, slot.location);
+            acc[key] = (acc[key] || 0) + 1;
+            return acc;
+        }, {});
         let MOCK_SLOTS_DATA = {
             "slots": [...INITIAL_SLOTS]
         };
@@ -814,7 +1323,8 @@
         };
 
         let SELECTED_BRAND = null;
-        let SELECTED_PROJECT = null;
+        let SELECTED_EXPERIENCE = null;
+        let ADMIN_SELECTED_BRAND = null;
 
         // [開發者註記] 模擬已核准的使用者（含雙重驗證碼）
         const MOCK_APPROVED_USERS = [ 
@@ -858,21 +1368,35 @@
         // 品牌首頁
         const brandGrid = document.getElementById('brand-grid');
         const brandCardTemplate = document.getElementById('brand-card-template');
-        const brandDashboardEmpty = document.getElementById('brand-dashboard-empty');
-        const brandDashboardContainer = document.getElementById('brand-dashboard');
-        const brandDashboardBreadcrumb = document.getElementById('brand-dashboard-breadcrumb');
-        const brandDashboardTitle = document.getElementById('brand-dashboard-title');
-        const brandDashboardDescription = document.getElementById('brand-dashboard-description');
-        const brandDashboardMeta = document.getElementById('brand-dashboard-meta');
-        const brandDashboardProjects = document.getElementById('brand-dashboard-projects');
-        const projectCardTemplate = document.getElementById('project-card-template');
+        const brandListEmpty = document.getElementById('brand-list-empty');
+        const brandSelectionEmpty = document.getElementById('brand-selection-empty');
+        const brandSelectionPanel = document.getElementById('brand-selection-panel');
+        const brandSelectionBreadcrumb = document.getElementById('brand-selection-breadcrumb');
+        const brandSelectionTitle = document.getElementById('brand-selection-title');
+        const brandSelectionSubtitle = document.getElementById('brand-selection-subtitle');
+        const brandSelectionRemaining = document.getElementById('brand-selection-remaining');
+        const regionOverviewBody = document.getElementById('region-overview-body');
+        const regionOverviewEmpty = document.getElementById('region-overview-empty');
+        const brandAvailabilityList = document.getElementById('brand-availability-list');
+        const brandAvailabilityEmpty = document.getElementById('brand-availability-empty');
+        const experienceCardTemplate = document.getElementById('experience-card-template');
 
-        // 預約頁面標頭
+        // 預約頁面標頭與詳情
         const bookingBreadcrumb = document.getElementById('booking-breadcrumb');
-        const bookingTitle = document.getElementById('booking-title');
-        const bookingIntro = document.getElementById('booking-intro');
-        const bookingGoal = document.getElementById('booking-goal');
-        const bookingGoalText = document.getElementById('booking-goal-text');
+        const bookingBackButton = document.getElementById('booking-back-button');
+        const experienceVehicleImage = document.getElementById('experience-vehicle-image');
+        const experienceVehicleClass = document.getElementById('experience-vehicle-class');
+        const experienceTitle = document.getElementById('experience-title');
+        const experienceDealer = document.getElementById('experience-dealer');
+        const experienceLocation = document.getElementById('experience-location');
+        const experienceUsage = document.getElementById('experience-usage');
+        const experienceVehicleSummary = document.getElementById('experience-vehicle-summary');
+        const experienceMission = document.getElementById('experience-mission');
+        const experienceHighlights = document.getElementById('experience-highlights');
+        const experienceCautions = document.getElementById('experience-cautions');
+        const experienceTrims = document.getElementById('experience-trims');
+        const experienceRemainingBadge = document.getElementById('experience-remaining-badge');
+        const experienceNextSlot = document.getElementById('experience-next-slot');
 
         // 管理儀表板元素
         const adminTotalBrands = document.getElementById('admin-total-brands');
@@ -885,6 +1409,21 @@
         const adminUpcomingEmpty = document.getElementById('admin-upcoming-empty');
         const adminMonthlySummary = document.getElementById('admin-monthly-summary');
         const adminMonthlyEmpty = document.getElementById('admin-monthly-empty');
+        const adminBrandDetailSection = document.getElementById('admin-brand-detail');
+        const adminBrandDetailCard = document.getElementById('admin-brand-detail-card');
+        const adminBrandDetailBreadcrumb = document.getElementById('admin-brand-detail-breadcrumb');
+        const adminBrandDetailTitle = document.getElementById('admin-brand-detail-title');
+        const adminBrandDetailDescription = document.getElementById('admin-brand-detail-description');
+        const adminBrandDetailRemaining = document.getElementById('admin-brand-detail-remaining');
+        const adminBrandDetailBooked = document.getElementById('admin-brand-detail-booked');
+        const adminBrandDetailUtilization = document.getElementById('admin-brand-detail-utilization');
+        const adminBrandDetailNext = document.getElementById('admin-brand-detail-next');
+        const adminBrandDetailProjects = document.getElementById('admin-brand-detail-projects');
+        const adminBrandDetailProjectsEmpty = document.getElementById('admin-brand-detail-projects-empty');
+        const adminBrandDetailRegionBody = document.getElementById('admin-brand-detail-region-body');
+        const adminBrandDetailRegionEmpty = document.getElementById('admin-brand-detail-region-empty');
+        const adminBrandDetailDealerBody = document.getElementById('admin-brand-detail-dealer-body');
+        const adminBrandDetailDealerEmpty = document.getElementById('admin-brand-detail-dealer-empty');
 
         // 登入頁面
         const loginForm = document.getElementById('login-form');
@@ -907,7 +1446,8 @@
         const errorContainer = document.getElementById('error-container');
         const errorMessage = document.getElementById('error-message');
         const slotsContainer = document.getElementById('slots-container');
-        const slotCardTemplate = document.getElementById('slot-card-template');
+        const slotsEmptyState = document.getElementById('slots-empty');
+        const slotItemTemplate = document.getElementById('slot-item-template');
         
         // Modal
         const bookingModal = document.getElementById('booking-modal');
@@ -1005,6 +1545,12 @@
                         CURRENT_USER.name = pendingUser.name;
                         CURRENT_USER.role = pendingUser.role;
 
+                        SELECTED_BRAND = null;
+                        SELECTED_EXPERIENCE = null;
+                        hideBrandSelection();
+                        renderBrandCards();
+                        renderRegionOverview();
+
                         showLoginLoading(false);
                         resetLoginForm();
                         updateNavUI(true);
@@ -1029,38 +1575,45 @@
             CURRENT_USER.name = null;
             CURRENT_USER.role = null;
             SELECTED_BRAND = null;
-            SELECTED_PROJECT = null;
-            updateNavUI(false); // 更新導航欄為 "登入前"
+            SELECTED_EXPERIENCE = null;
+            ADMIN_SELECTED_BRAND = null;
+            hideBrandSelection();
+            renderBrandCards();
+            updateExperienceHeader();
+            updateNavUI(false);
             resetLoginForm();
-            showPage('login'); // 顯示登入頁面
-            slotsContainer.innerHTML = ''; // 清空時段
+            showPage('login');
+            if (slotsContainer) {
+                slotsContainer.innerHTML = '';
+            }
+            if (slotsEmptyState) {
+                slotsEmptyState.classList.add('hidden');
+            }
+            renderRegionOverview();
             refreshAdminDashboardIfVisible();
         }
 
-        function showBrandHome() {
+        function showBrandHome(targetBrand = null) {
             if (!CURRENT_USER.email) {
                 showPage('login');
                 return;
             }
 
-            bookingBreadcrumb.textContent = '';
-            bookingTitle.textContent = '可預約的時段';
-            bookingIntro.textContent = '';
-            bookingGoal.classList.add('hidden');
-            bookingGoalText.textContent = '';
+            if (typeof targetBrand === 'string') {
+                SELECTED_BRAND = targetBrand;
+            }
+
+            SELECTED_EXPERIENCE = null;
+            updateExperienceHeader();
 
             showPage('brand-home');
 
-            const targetBrand = SELECTED_BRAND || null;
-            SELECTED_PROJECT = null;
-
             renderBrandCards();
 
-            if (targetBrand) {
-                openBrandDashboard(targetBrand);
+            if (SELECTED_BRAND) {
+                openBrandForBooking(SELECTED_BRAND);
             } else {
-                SELECTED_BRAND = null;
-                showBrandDashboardPlaceholder();
+                hideBrandSelection();
             }
         }
 
@@ -1075,155 +1628,500 @@
         }
 
         function renderBrandCards() {
-            if (!brandCardTemplate) return;
+            if (!brandCardTemplate || !brandGrid) {
+                return;
+            }
 
             brandGrid.innerHTML = '';
-            BRAND_DATA.forEach(brand => {
+
+            const sortedBrands = [...BRAND_DATA].sort((a, b) => {
+                const aSlots = getBrandSlots(a.name).length;
+                const bSlots = getBrandSlots(b.name).length;
+                if (bSlots !== aSlots) {
+                    return bSlots - aSlots;
+                }
+                return a.name.localeCompare(b.name, 'zh-Hant');
+            });
+
+            sortedBrands.forEach(brand => {
                 const fragment = brandCardTemplate.content.cloneNode(true);
-                const card = fragment.querySelector('.brand-card');
-                const button = fragment.querySelector('button');
-                const projectCountLabel = fragment.querySelector('.brand-project-count');
-                const nextSlotLabel = fragment.querySelector('.brand-next-slot');
-                const brandProjects = BRAND_PROJECTS[brand.name] || [];
-                const upcomingSlot = getNextSlotForBrand(brand.name);
+                const button = fragment.querySelector('.brand-card');
+                const nameEl = fragment.querySelector('.brand-name');
+                const originEl = fragment.querySelector('.brand-origin');
+                const remainingEl = fragment.querySelector('.brand-remaining');
 
-                fragment.querySelector('.brand-name').textContent = brand.name;
-                fragment.querySelector('.brand-origin').textContent = brand.origin;
-                fragment.querySelector('.brand-description').textContent = brand.description;
-                projectCountLabel.textContent = `任務數量：${brandProjects.length}`;
-                nextSlotLabel.textContent = upcomingSlot ? `最近時段：${upcomingSlot}` : '最近時段：尚未開放';
+                const brandSlots = getBrandSlots(brand.name);
 
-                card.style.borderTopColor = brand.accent;
-                button.style.backgroundColor = brand.accent;
-                button.style.boxShadow = `0 12px 24px -16px ${brand.accent}80`;
-                card.dataset.brand = brand.name;
-                card.setAttribute('role', 'button');
-                card.setAttribute('tabindex', '0');
-
-                if (SELECTED_BRAND === brand.name) {
-                    card.classList.add('selected');
-                    card.style.boxShadow = `0 20px 40px -20px ${brand.accent}66`;
-                } else {
-                    card.classList.remove('selected');
-                    card.style.boxShadow = '';
+                if (nameEl) {
+                    nameEl.textContent = brand.name;
+                }
+                if (originEl) {
+                    originEl.textContent = brand.origin || '';
+                    originEl.style.color = brand.accent || '#0E3B33';
+                }
+                if (remainingEl) {
+                    remainingEl.textContent = `剩餘 ${brandSlots.length}`;
                 }
 
-                const handleSelectBrand = (event) => {
-                    event.stopPropagation();
-                    openBrandDashboard(brand.name);
-                };
+                const accent = brand.accent || '#0E3B33';
+                button.dataset.brand = brand.name;
+                if (SELECTED_BRAND === brand.name) {
+                    button.classList.add('active');
+                    button.style.borderColor = accent;
+                } else {
+                    button.classList.remove('active');
+                    button.style.borderColor = '#e5e7eb';
+                }
 
-                card.addEventListener('click', () => openBrandDashboard(brand.name));
-                card.addEventListener('keydown', (event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault();
-                        openBrandDashboard(brand.name);
-                    }
-                });
-                button.addEventListener('click', handleSelectBrand);
+                button.addEventListener('click', () => openBrandForBooking(brand.name));
 
                 brandGrid.appendChild(fragment);
             });
+
+            if (brandListEmpty) {
+                if (!sortedBrands.length) {
+                    brandListEmpty.classList.remove('hidden');
+                } else {
+                    brandListEmpty.classList.add('hidden');
+                }
+            }
         }
 
-        function showBrandDashboardPlaceholder() {
-            brandDashboardProjects.innerHTML = '';
-            brandDashboardContainer.classList.add('hidden');
-            brandDashboardEmpty.classList.remove('hidden');
+        function renderRegionOverview() {
+            if (!regionOverviewBody) {
+                return;
+            }
+
+            const summaryMap = new Map();
+            const slots = MOCK_SLOTS_DATA.slots || [];
+
+            slots.forEach(slot => {
+                const city = detectRegionFromSlot(slot);
+                const region = mapCityToRegion(city);
+                if (!summaryMap.has(region)) {
+                    summaryMap.set(region, new Map());
+                }
+                const brandMap = summaryMap.get(region);
+                const brandName = slot.brand || '其他';
+                brandMap.set(brandName, (brandMap.get(brandName) || 0) + 1);
+            });
+
+            const regionsOrder = ['北部', '中部', '南部', '東部', '未分類'];
+            const regionSummaries = regionsOrder.map(region => {
+                const brandMap = summaryMap.get(region) || new Map();
+                const entries = Array.from(brandMap.entries()).sort((a, b) => {
+                    if (b[1] !== a[1]) {
+                        return b[1] - a[1];
+                    }
+                    return a[0].localeCompare(b[0], 'zh-Hant');
+                });
+                const total = entries.reduce((sum, [, count]) => sum + count, 0);
+                return { region, entries, total };
+            });
+
+            const hasAnySlot = regionSummaries.some(entry => entry.total > 0);
+            regionOverviewBody.innerHTML = '';
+
+            if (!hasAnySlot) {
+                if (regionOverviewEmpty) {
+                    regionOverviewEmpty.classList.remove('hidden');
+                }
+                return;
+            }
+
+            if (regionOverviewEmpty) {
+                regionOverviewEmpty.classList.add('hidden');
+            }
+
+            const maxTotal = regionSummaries.reduce((max, entry) => Math.max(max, entry.total), 0);
+
+            regionSummaries.forEach(({ region, entries, total }) => {
+                const row = document.createElement('tr');
+                row.className = 'group border-b border-gray-100 last:border-b-0';
+
+                const regionCell = document.createElement('td');
+                regionCell.className = 'px-6 py-5 align-top bg-white transition-colors group-hover:bg-emerald-50/40';
+                const brandCountLabel = entries.length ? `${entries.length} 個品牌可預約` : '暫無可預約品牌';
+                const progressPercent = maxTotal ? Math.round((total / maxTotal) * 100) : 0;
+                const progressWidth = total === 0 ? 0 : Math.min(100, Math.max(18, progressPercent));
+                regionCell.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <p class="text-base font-semibold text-gray-900">${region}</p>
+                                <p class="mt-1 text-xs text-gray-400">${brandCountLabel}</p>
+                            </div>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full bg-emerald-100 text-xs font-semibold text-emerald-700">剩餘 ${total} 場</span>
+                        </div>
+                        <div class="h-1.5 rounded-full bg-emerald-100/70 overflow-hidden">
+                            <div class="h-full rounded-full bg-emerald-500 transition-all duration-500" style="width: ${progressWidth}%;"></div>
+                        </div>
+                    </div>
+                `;
+
+                const brandCell = document.createElement('td');
+                brandCell.className = 'px-6 py-5 align-top bg-white transition-colors group-hover:bg-emerald-50/40';
+
+                if (entries.length) {
+                    const wrap = document.createElement('div');
+                    wrap.className = 'flex flex-wrap gap-2';
+                    entries.forEach(([brandName, count], index) => {
+                        const accent = BRAND_ACCENT_MAP[brandName] || '#047857';
+                        const chip = document.createElement('button');
+                        chip.type = 'button';
+                        chip.className = 'inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold text-white shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-emerald-500';
+                        chip.style.backgroundColor = accent;
+                        chip.style.transition = 'transform 0.2s ease, box-shadow 0.2s ease';
+                        const highlightShadow = `0 10px 22px -14px ${accent}cc`;
+                        if (index === 0) {
+                            chip.style.boxShadow = highlightShadow;
+                        }
+                        chip.innerHTML = `
+                            <span class="text-sm font-semibold tracking-tight">${brandName}</span>
+                            <span class="inline-flex items-center rounded-full bg-white/25 px-2 py-0.5 text-[11px] font-medium">剩 ${count}</span>
+                        `;
+                        chip.addEventListener('mouseenter', () => {
+                            chip.style.transform = 'translateY(-1px)';
+                            chip.style.boxShadow = highlightShadow;
+                        });
+                        chip.addEventListener('mouseleave', () => {
+                            chip.style.transform = 'translateY(0)';
+                            chip.style.boxShadow = index === 0 ? highlightShadow : 'none';
+                        });
+                        chip.addEventListener('click', () => {
+                            SELECTED_BRAND = brandName;
+                            SELECTED_EXPERIENCE = null;
+                            showBrandHome(brandName);
+                        });
+                        wrap.appendChild(chip);
+                    });
+                    brandCell.appendChild(wrap);
+
+                    const [topBrandName, topCount] = entries[0] || [];
+                    if (topBrandName) {
+                        const accent = BRAND_ACCENT_MAP[topBrandName] || '#047857';
+                        const highlight = document.createElement('div');
+                        highlight.className = 'mt-4 flex flex-wrap items-center gap-3 rounded-2xl px-4 py-3 text-xs';
+                        highlight.innerHTML = `
+                            <span class="top-brand-name text-sm font-semibold">${topBrandName}</span>
+                            <span class="top-brand-copy text-xs sm:text-sm">熱門任務剩餘 ${topCount} 場，點擊查看完整場次。</span>
+                            <button type="button" class="top-brand-action inline-flex items-center gap-1 text-xs font-semibold focus:outline-none focus:underline">
+                                查看全場次
+                                <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </button>
+                        `;
+                        highlight.style.border = `1px dashed ${accent}66`;
+                        highlight.style.backgroundColor = `${accent}12`;
+                        highlight.style.boxShadow = `0 12px 24px -16px ${accent}4d`;
+                        highlight.style.color = accent;
+
+                        const highlightName = highlight.querySelector('.top-brand-name');
+                        const highlightCopy = highlight.querySelector('.top-brand-copy');
+                        const highlightButton = highlight.querySelector('.top-brand-action');
+
+                        if (highlightName) {
+                            highlightName.style.color = accent;
+                        }
+                        if (highlightCopy) {
+                            highlightCopy.style.color = `${accent}cc`;
+                        }
+                        if (highlightButton) {
+                            highlightButton.style.color = accent;
+                            highlightButton.addEventListener('mouseenter', () => {
+                                highlightButton.style.opacity = '0.8';
+                            });
+                            highlightButton.addEventListener('mouseleave', () => {
+                                highlightButton.style.opacity = '1';
+                            });
+                            highlightButton.addEventListener('click', () => {
+                                SELECTED_BRAND = topBrandName;
+                                SELECTED_EXPERIENCE = null;
+                                showBrandHome(topBrandName);
+                            });
+                        }
+
+                        brandCell.appendChild(highlight);
+                    }
+                } else {
+                    brandCell.innerHTML = `
+                        <div class="rounded-2xl border border-dashed border-gray-300 bg-gray-50 px-4 py-6 text-center text-sm text-gray-400">
+                            目前沒有可預約的品牌，請稍後再查看。
+                        </div>
+                    `;
+                }
+
+                row.appendChild(regionCell);
+                row.appendChild(brandCell);
+                regionOverviewBody.appendChild(row);
+            });
         }
 
-        function clearBrandSelection() {
+        function hideBrandSelection() {
+            if (brandSelectionPanel) {
+                brandSelectionPanel.classList.add('hidden');
+            }
+            if (brandSelectionBreadcrumb) {
+                renderBreadcrumb(brandSelectionBreadcrumb, []);
+            }
+            if (brandSelectionTitle) {
+                brandSelectionTitle.textContent = '';
+            }
+            if (brandSelectionSubtitle) {
+                brandSelectionSubtitle.textContent = '';
+            }
+            if (brandSelectionRemaining) {
+                brandSelectionRemaining.classList.add('hidden');
+                brandSelectionRemaining.textContent = '';
+            }
+            if (brandAvailabilityList) {
+                brandAvailabilityList.innerHTML = '';
+            }
+            if (brandAvailabilityEmpty) {
+                brandAvailabilityEmpty.classList.add('hidden');
+            }
+            if (brandSelectionEmpty) {
+                brandSelectionEmpty.classList.remove('hidden');
+            }
+            renderRegionOverview();
+        }
+
+        function openBrandForBooking(brandName) {
             if (!CURRENT_USER.email) {
                 showPage('login');
                 return;
             }
 
-            SELECTED_BRAND = null;
-            SELECTED_PROJECT = null;
-            renderBrandCards();
-            showBrandDashboardPlaceholder();
-        }
-
-        function openBrandDashboard(brandName) {
-            if (!CURRENT_USER.email) {
-                showPage('login');
+            const brandInfo = BRAND_DATA.find(brand => brand.name === brandName);
+            if (!brandInfo) {
+                showMessage('error', '找不到品牌資訊，請重新整理頁面。');
                 return;
             }
 
             SELECTED_BRAND = brandName;
-            SELECTED_PROJECT = null;
+            SELECTED_EXPERIENCE = null;
 
+            const brandSlots = getBrandSlots(brandName);
             renderBrandCards();
-            renderBrandDashboard(brandName);
+            renderBrandSummary(brandInfo, brandSlots);
+            renderBrandAvailabilityList();
         }
 
-        function renderBrandDashboard(brandName) {
-            const brandInfo = BRAND_DATA.find(brand => brand.name === brandName);
+        function renderBrandSummary(brandInfo, brandSlots) {
+            if (!brandSelectionPanel) {
+                return;
+            }
+
+            if (brandSelectionEmpty) {
+                brandSelectionEmpty.classList.add('hidden');
+            }
+            brandSelectionPanel.classList.remove('hidden');
+
+            if (brandSelectionBreadcrumb) {
+                renderBreadcrumb(brandSelectionBreadcrumb, [
+                    {
+                        label: '品牌首頁',
+                        action: () => {
+                            SELECTED_BRAND = null;
+                            SELECTED_EXPERIENCE = null;
+                            showBrandHome();
+                        }
+                    },
+                    {
+                        label: brandInfo.name,
+                        action: () => showBrandHome(brandInfo.name),
+                        isCurrent: true
+                    }
+                ]);
+            }
+
+            const accent = brandInfo.accent || '#0E3B33';
+            const nextSlotLabel = getNextSlotForBrand(brandInfo.name) || '尚未開放';
+            const citySet = new Set(
+                brandSlots
+                    .map(slot => detectRegionFromSlot(slot))
+                    .filter(city => city && city !== '未分類')
+            );
+
+            if (brandSelectionTitle) {
+                brandSelectionTitle.textContent = `${brandInfo.name} 任務預約`;
+                brandSelectionTitle.style.color = accent;
+            }
+            if (brandSelectionSubtitle) {
+                brandSelectionSubtitle.textContent = '選擇下方據點卡片查看任務詳情與可預約時段。';
+            }
+            if (brandSelectionRemaining) {
+                brandSelectionRemaining.textContent = `剩餘 ${brandSlots.length} 場 · ${citySet.size} 個城市 · 最近 ${nextSlotLabel}`;
+                if (brandSlots.length > 0) {
+                    brandSelectionRemaining.classList.remove('hidden');
+                } else {
+                    brandSelectionRemaining.classList.add('hidden');
+                }
+            }
+        }
+
+        function renderBrandAvailabilityList() {
+            if (!brandAvailabilityList) {
+                return;
+            }
+
+            brandAvailabilityList.innerHTML = '';
+
+            if (!SELECTED_BRAND) {
+                if (brandAvailabilityEmpty) {
+                    brandAvailabilityEmpty.classList.add('hidden');
+                }
+                return;
+            }
+
+            const brandInfo = BRAND_DATA.find(brand => brand.name === SELECTED_BRAND);
             if (!brandInfo) {
-                showBrandDashboardPlaceholder();
+                if (brandAvailabilityEmpty) {
+                    brandAvailabilityEmpty.classList.remove('hidden');
+                }
                 return;
             }
+            const accent = brandInfo.accent || '#0E3B33';
+            const brandSlots = getBrandSlots(SELECTED_BRAND);
 
-            const projects = BRAND_PROJECTS[brandName] || [];
-            const upcomingSlot = getNextSlotForBrand(brandName);
+            const experienceMap = new Map();
 
-            brandDashboardEmpty.classList.add('hidden');
-            brandDashboardContainer.classList.remove('hidden');
-            brandDashboardContainer.style.borderTopColor = brandInfo.accent;
-
-            brandDashboardBreadcrumb.textContent = `品牌首頁 / ${brandName}`;
-            brandDashboardTitle.textContent = `${brandName} 專案儀表板`;
-            brandDashboardDescription.textContent = brandInfo.description || '';
-
-            if (projects.length === 0) {
-                brandDashboardMeta.textContent = '目前沒有可預約的任務，請稍後再試。';
-            } else if (upcomingSlot) {
-                brandDashboardMeta.textContent = `目前開放 ${projects.length} 個任務，最近可預約時段：${upcomingSlot}`;
-            } else {
-                brandDashboardMeta.textContent = `目前開放 ${projects.length} 個任務，尚未釋出可預約時段。`;
-            }
-
-            brandDashboardProjects.innerHTML = '';
-
-            if (projects.length === 0) {
-                brandDashboardProjects.innerHTML = '<p class="text-gray-600">目前沒有可預約的任務，請稍後再試。</p>';
-                return;
-            }
-
-            projects.forEach(project => {
-                const fragment = projectCardTemplate.content.cloneNode(true);
-                const cardRoot = fragment.querySelector('.project-card');
-                const actionButton = fragment.querySelector('button');
-                fragment.querySelector('.project-category').textContent = project.category;
-                fragment.querySelector('.project-title').textContent = project.title;
-                fragment.querySelector('.project-summary').textContent = project.summary;
-                fragment.querySelector('.project-goal').textContent = project.goal;
-
-                if (brandInfo.accent) {
-                    cardRoot.style.borderTopColor = brandInfo.accent;
-                    actionButton.style.backgroundColor = brandInfo.accent;
-                    actionButton.style.boxShadow = `0 12px 24px -16px ${brandInfo.accent}80`;
+            brandSlots.forEach(slot => {
+                const experienceKey = buildExperienceKey(SELECTED_BRAND, slot.projectId, slot.dealer, slot.location);
+                if (!experienceMap.has(experienceKey)) {
+                    const city = detectRegionFromSlot(slot);
+                    experienceMap.set(experienceKey, {
+                        key: experienceKey,
+                        projectId: slot.projectId,
+                        dealer: slot.dealer || '經銷據點待確認',
+                        location: slot.location || '',
+                        city,
+                        macroRegion: mapCityToRegion(city),
+                        slots: []
+                    });
                 }
 
-                actionButton.addEventListener('click', () => openProjectSchedule(brandName, project.id));
-                brandDashboardProjects.appendChild(fragment);
+                const entry = experienceMap.get(experienceKey);
+                entry.slots.push(slot);
+            });
+
+            const experiences = Array.from(experienceMap.values()).sort((a, b) => {
+                if (b.slots.length !== a.slots.length) {
+                    return b.slots.length - a.slots.length;
+                }
+                const projectA = PROJECT_MAP[a.projectId] || {};
+                const projectB = PROJECT_MAP[b.projectId] || {};
+                return (projectA.title || '').localeCompare(projectB.title || '', 'zh-Hant');
+            });
+
+            if (!experiences.length) {
+                if (brandAvailabilityEmpty) {
+                    brandAvailabilityEmpty.classList.remove('hidden');
+                }
+                return;
+            }
+
+            if (brandAvailabilityEmpty) {
+                brandAvailabilityEmpty.classList.add('hidden');
+            }
+
+            experiences.forEach(entry => {
+                if (!experienceCardTemplate) {
+                    return;
+                }
+                const fragment = experienceCardTemplate.content.cloneNode(true);
+                const cardRoot = fragment.querySelector('.experience-card');
+                const projectEl = fragment.querySelector('.experience-project');
+                const dealerEl = fragment.querySelector('.experience-dealer');
+                const regionEl = fragment.querySelector('.experience-region');
+                const remainingEl = fragment.querySelector('.experience-remaining');
+                const nextEl = fragment.querySelector('.experience-next');
+
+                const projectInfo = PROJECT_MAP[entry.projectId] || {};
+                const regionLabelParts = [];
+                if (entry.macroRegion && entry.macroRegion !== '未分類') {
+                    regionLabelParts.push(entry.macroRegion);
+                }
+                if (entry.city && entry.city !== '未分類') {
+                    regionLabelParts.push(entry.city);
+                }
+
+                if (projectEl) {
+                    projectEl.textContent = projectInfo.title || '任務體驗';
+                }
+                if (dealerEl) {
+                    dealerEl.textContent = entry.dealer;
+                }
+                if (regionEl) {
+                    regionEl.textContent = regionLabelParts.length ? regionLabelParts.join(' · ') : '地區待確認';
+                }
+
+                const initialCount = INITIAL_SLOTS_BY_EXPERIENCE[entry.key] || entry.slots.length;
+                const remainingCount = entry.slots.length;
+                if (remainingEl) {
+                    remainingEl.textContent = `剩餘 ${remainingCount}`;
+                    remainingEl.style.backgroundColor = accent;
+                    remainingEl.style.color = '#ffffff';
+                    if (remainingCount <= 1) {
+                        remainingEl.style.backgroundColor = '#f87171';
+                        remainingEl.style.color = '#7f1d1d';
+                    } else if (remainingCount <= 3) {
+                        remainingEl.style.backgroundColor = '#fbbf24';
+                        remainingEl.style.color = '#92400e';
+                    }
+                }
+
+                const sortedSlots = [...entry.slots].sort((a, b) => (a.month || '').localeCompare(b.month || ''));
+                const nextSlot = sortedSlots[0];
+                if (nextEl) {
+                    if (nextSlot) {
+                        nextEl.textContent = `最近：${formatFullMonth(nextSlot.month)}｜初始 ${initialCount}`;
+                    } else {
+                        nextEl.textContent = '最近：尚未開放';
+                    }
+                }
+
+                if (cardRoot) {
+                    cardRoot.style.borderColor = '#e5e7eb';
+                    if (SELECTED_EXPERIENCE && SELECTED_EXPERIENCE.key === entry.key) {
+                        cardRoot.classList.add('ring-2', 'ring-emerald-400');
+                        cardRoot.style.borderColor = accent;
+                    }
+                    cardRoot.addEventListener('mouseenter', () => {
+                        cardRoot.style.borderColor = accent;
+                    });
+                    cardRoot.addEventListener('mouseleave', () => {
+                        const isActive = SELECTED_EXPERIENCE && SELECTED_EXPERIENCE.key === entry.key;
+                        cardRoot.style.borderColor = isActive ? accent : '#e5e7eb';
+                    });
+                    cardRoot.addEventListener('click', () => {
+                        if (SELECTED_EXPERIENCE && SELECTED_EXPERIENCE.key === entry.key) {
+                            return;
+                        }
+                        openExperienceDetail(SELECTED_BRAND, entry);
+                    });
+                }
+
+                brandAvailabilityList.appendChild(fragment);
             });
         }
 
+        function getBrandSlots(brandName) {
+            return (MOCK_SLOTS_DATA.slots || []).filter(slot => slot.brand === brandName);
+        }
         function getNextSlotForBrand(brandName) {
-            if (!brandName || !MOCK_SLOTS_DATA.slots) {
+            if (!brandName) {
                 return null;
             }
 
-            const brandSlots = MOCK_SLOTS_DATA.slots
-                .filter(slot => slot.brand === brandName)
-                .sort((a, b) => {
-                    const monthCompare = (a.month || '').localeCompare(b.month || '');
-                    if (monthCompare !== 0) {
-                        return monthCompare;
-                    }
-                    return (a.dealer || '').localeCompare(b.dealer || '');
-                });
+            const brandSlots = getBrandSlots(brandName).slice().sort((a, b) => {
+                const monthCompare = (a.month || '').localeCompare(b.month || '');
+                if (monthCompare !== 0) {
+                    return monthCompare;
+                }
+                return (a.dealer || '').localeCompare(b.dealer || '');
+            });
 
             if (!brandSlots.length) {
                 return null;
@@ -1238,105 +2136,296 @@
             return nextSlot.dealer ? `${monthLabel} · ${nextSlot.dealer}` : monthLabel;
         }
 
-        function openProjectSchedule(brandName, projectId) {
-            const projectInfo = PROJECT_MAP[projectId];
-            if (!projectInfo) {
-                showMessage('error', '找不到專案資訊，請重新選擇品牌。');
+        function updateExperienceHeader() {
+            const crumbs = [];
+
+            const goHome = () => {
+                SELECTED_BRAND = null;
+                SELECTED_EXPERIENCE = null;
+                showBrandHome();
+            };
+
+            crumbs.push({
+                label: '品牌首頁',
+                action: goHome
+            });
+
+            let backHandler = null;
+            let backLabel = '返回品牌首頁';
+
+            if (SELECTED_EXPERIENCE) {
+                const brandName = SELECTED_EXPERIENCE.brandName;
+                const projectTitle = SELECTED_EXPERIENCE.projectTitle || '任務體驗';
+
+                if (brandName) {
+                    crumbs.push({
+                        label: brandName,
+                        action: () => {
+                            SELECTED_BRAND = brandName;
+                            SELECTED_EXPERIENCE = null;
+                            showBrandHome(brandName);
+                        }
+                    });
+                }
+
+                crumbs.push({
+                    label: projectTitle,
+                    isCurrent: true
+                });
+
+                backHandler = () => {
+                    if (brandName) {
+                        showBrandHome(brandName);
+                    } else {
+                        goHome();
+                    }
+                };
+                backLabel = '返回品牌任務列表';
+            }
+
+            renderBreadcrumb(bookingBreadcrumb, crumbs);
+
+            if (bookingBackButton) {
+                if (backHandler) {
+                    bookingBackButton.classList.remove('hidden');
+                    bookingBackButton.textContent = backLabel;
+                    bookingBackButton.onclick = backHandler;
+                } else {
+                    bookingBackButton.classList.add('hidden');
+                    bookingBackButton.onclick = null;
+                }
+            }
+        }
+
+        function openExperienceDetail(brandName, experienceMeta) {
+            if (!CURRENT_USER.email) {
+                showPage('login');
                 return;
             }
+
+            const brandInfo = BRAND_DATA.find(brand => brand.name === brandName);
+            if (!brandInfo) {
+                showMessage('error', '找不到品牌資訊，請重新選擇。');
+                return;
+            }
+
+            const experienceKey = experienceMeta.key
+                || buildExperienceKey(brandName, experienceMeta.projectId, experienceMeta.dealer, experienceMeta.location);
+            const brandSlots = getBrandSlots(brandName);
+            const matchingSlots = brandSlots.filter(slot => buildExperienceKey(brandName, slot.projectId, slot.dealer, slot.location) === experienceKey);
+
+            const primarySlot = matchingSlots[0] || null;
+            const projectInfo = PROJECT_MAP[experienceMeta.projectId] || {};
+
+            const derivedCity = primarySlot ? detectRegionFromSlot(primarySlot) : (experienceMeta.city || '未分類');
+            const derivedMacro = experienceMeta.macroRegion || mapCityToRegion(derivedCity);
+            const dealerName = primarySlot?.dealer || experienceMeta.dealer || '經銷據點待確認';
+            const location = primarySlot?.location || experienceMeta.location || '';
 
             SELECTED_BRAND = brandName;
-            SELECTED_PROJECT = projectInfo;
-            updateBookingHeader();
-            fetchSlotsForProject(brandName, projectId);
-        }
+            SELECTED_EXPERIENCE = {
+                key: experienceKey,
+                brandName,
+                projectId: experienceMeta.projectId,
+                projectTitle: projectInfo.title || '任務體驗',
+                dealerName,
+                location,
+                city: derivedCity,
+                macroRegion: derivedMacro,
+                accent: brandInfo.accent || '#0E3B33'
+            };
 
-        function updateBookingHeader() {
-            if (!SELECTED_PROJECT) {
-                bookingBreadcrumb.textContent = '';
-                bookingTitle.textContent = '可預約的時段';
-                bookingIntro.textContent = '';
-                bookingGoal.classList.add('hidden');
-                bookingGoalText.textContent = '';
-                return;
-            }
+            renderBrandAvailabilityList();
+            updateExperienceHeader();
 
-            bookingBreadcrumb.textContent = `品牌首頁 / ${SELECTED_PROJECT.brandName} / ${SELECTED_PROJECT.title}`;
-            bookingTitle.textContent = SELECTED_PROJECT.title;
-            bookingIntro.textContent = SELECTED_PROJECT.summary;
-
-            if (SELECTED_PROJECT.goal) {
-                bookingGoal.classList.remove('hidden');
-                bookingGoalText.textContent = SELECTED_PROJECT.goal;
-            } else {
-                bookingGoal.classList.add('hidden');
-                bookingGoalText.textContent = '';
-            }
-        }
-
-        // 4. (流程 1) 依品牌與專案載入可預約時段 - [模擬模式]
-        async function fetchSlotsForProject(brandName, projectId) {
             showPage('booking');
             showLoading(true);
             showLoadError(null);
 
             setTimeout(() => {
                 try {
-                    const filteredSlots = MOCK_SLOTS_DATA.slots.filter(slot => slot.brand === brandName && slot.projectId === projectId);
-                    renderSlots(filteredSlots);
+                    const sorted = matchingSlots.slice().sort((a, b) => (a.month || '').localeCompare(b.month || ''));
+                    renderExperienceDetail(SELECTED_EXPERIENCE, sorted);
+                    renderExperienceSlots(sorted);
                     showLoading(false);
                 } catch (error) {
-                    console.error('渲染模擬資料失敗:', error);
+                    console.error('渲染體驗資料失敗:', error);
                     showLoadError(error.message);
                     showLoading(false);
                 }
-            }, 800);
+            }, 400);
         }
 
-        // 5. 渲染時段卡片
-        function renderSlots(slots) {
-            slotsContainer.innerHTML = '';
-            if (slots.length === 0) {
-                slotsContainer.innerHTML = `<p class="text-gray-600 text-center col-span-full">太棒了！所有時段皆已預約完畢。</p>`;
-                slotsContainer.classList.remove('hidden');
+        function renderExperienceDetail(experience, slots) {
+            if (!experience) {
                 return;
             }
 
+            const projectInfo = PROJECT_MAP[experience.projectId] || {};
+            const vehicle = projectInfo.vehicle || {};
+            const details = projectInfo.details || {};
+            const accent = experience.accent || projectInfo.brandAccent || '#0E3B33';
+
+            if (experienceVehicleImage) {
+                experienceVehicleImage.src = vehicle.image || 'https://images.unsplash.com/photo-1549921296-3b4a4f9452c6?auto=format&fit=crop&w=1200&q=80';
+                experienceVehicleImage.alt = vehicle.imageAlt || `${projectInfo.title || '任務體驗'} 示意圖`;
+            }
+            if (experienceVehicleClass) {
+                experienceVehicleClass.textContent = vehicle.segment || '車型資訊';
+            }
+            if (experienceTitle) {
+                experienceTitle.textContent = projectInfo.title || '任務體驗';
+            }
+            if (experienceDealer) {
+                const regionParts = [];
+                if (experience.macroRegion && experience.macroRegion !== '未分類') {
+                    regionParts.push(experience.macroRegion);
+                }
+                if (experience.city && experience.city !== '未分類') {
+                    regionParts.push(experience.city);
+                }
+                const regionLabel = regionParts.length ? `${experience.dealerName}｜${regionParts.join(' · ')}` : experience.dealerName;
+                experienceDealer.textContent = regionLabel || '';
+                experienceDealer.style.color = accent;
+            }
+            if (experienceLocation) {
+                const locationLabel = (experience.location || '').split('｜').join(' ｜ ');
+                experienceLocation.textContent = locationLabel;
+            }
+            if (experienceUsage) {
+                experienceUsage.textContent = vehicle.usage || '適合正在規劃賞車的神秘客。';
+            }
+            if (experienceVehicleSummary) {
+                experienceVehicleSummary.textContent = vehicle.summary || projectInfo.summary || '';
+            }
+            if (experienceMission) {
+                experienceMission.textContent = projectInfo.goal || details.focus || '請依照任務簡報完成必要的觀察與紀錄。';
+            }
+
+            if (experienceHighlights) {
+                experienceHighlights.innerHTML = '';
+                const highlights = Array.isArray(details.briefing) ? details.briefing : [];
+                highlights.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'flex items-start gap-2 text-sm text-gray-600';
+                    li.innerHTML = `<span class="mt-1 h-2 w-2 rounded-full bg-emerald-500"></span><span>${item}</span>`;
+                    experienceHighlights.appendChild(li);
+                });
+                if (!highlights.length) {
+                    const li = document.createElement('li');
+                    li.className = 'text-sm text-gray-500';
+                    li.textContent = projectInfo.summary || '請依照任務指引完成流程。';
+                    experienceHighlights.appendChild(li);
+                }
+            }
+
+            if (experienceCautions) {
+                experienceCautions.innerHTML = '';
+                const cautions = Array.isArray(details.cautions) ? details.cautions : [];
+                cautions.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'flex items-start gap-2 text-sm text-gray-600';
+                    li.innerHTML = `<span class="mt-1 h-2 w-2 rounded-full bg-amber-500"></span><span>${item}</span>`;
+                    experienceCautions.appendChild(li);
+                });
+                if (!cautions.length) {
+                    const li = document.createElement('li');
+                    li.className = 'text-sm text-gray-500';
+                    li.textContent = '請務必保持匿名身分並遵守展間禮節。';
+                    experienceCautions.appendChild(li);
+                }
+            }
+
+            if (experienceTrims) {
+                experienceTrims.innerHTML = '';
+                const trims = Array.isArray(vehicle.trims) ? vehicle.trims : [];
+                trims.forEach(trim => {
+                    const card = document.createElement('div');
+                    card.className = 'rounded-2xl border border-gray-200 p-4 shadow-sm';
+                    card.innerHTML = `
+                        <p class="text-sm font-semibold text-gray-700">${trim.name || '車型'}</p>
+                        <p class="text-base font-bold text-gray-900 mt-2">${trim.price || '價格待公布'}</p>
+                        <p class="text-xs text-gray-500 mt-2">${trim.highlight || ''}</p>
+                    `;
+                    experienceTrims.appendChild(card);
+                });
+                if (!trims.length) {
+                    const placeholder = document.createElement('div');
+                    placeholder.className = 'rounded-2xl border border-dashed border-gray-300 p-4 text-sm text-gray-500';
+                    placeholder.textContent = '此車型暫無建議等級資訊。';
+                    experienceTrims.appendChild(placeholder);
+                }
+            }
+
+            if (experienceRemainingBadge) {
+                const remaining = slots.length;
+                experienceRemainingBadge.textContent = `剩餘 ${remaining} 場`;
+                experienceRemainingBadge.style.backgroundColor = `${accent}1a`;
+                experienceRemainingBadge.style.color = accent;
+                if (remaining > 0) {
+                    experienceRemainingBadge.classList.remove('hidden');
+                } else {
+                    experienceRemainingBadge.classList.add('hidden');
+                }
+            }
+
+            if (experienceNextSlot) {
+                const nextSlot = slots[0];
+                experienceNextSlot.textContent = nextSlot
+                    ? `最近可預約：${formatFullMonth(nextSlot.month)}`
+                    : '最近可預約：尚未開放';
+            }
+
+            if (experienceVehicleClass) {
+                experienceVehicleClass.style.backgroundColor = `${accent}cc`;
+                experienceVehicleClass.style.color = '#ffffff';
+            }
+        }
+
+        function renderExperienceSlots(slots) {
+            if (!slotsContainer) {
+                return;
+            }
+
+            slotsContainer.innerHTML = '';
+
+            if (!slots.length) {
+                slotsContainer.classList.add('hidden');
+                if (slotsEmptyState) {
+                    slotsEmptyState.classList.remove('hidden');
+                }
+                return;
+            }
+
+            if (slotsEmptyState) {
+                slotsEmptyState.classList.add('hidden');
+            }
+
             slots.forEach(slot => {
-                const card = slotCardTemplate.content.cloneNode(true);
+                if (!slotItemTemplate) {
+                    return;
+                }
+                const fragment = slotItemTemplate.content.cloneNode(true);
+                const monthEl = fragment.querySelector('.slot-month');
+                const detailEl = fragment.querySelector('.slot-detail');
+                const bookButton = fragment.querySelector('.book-button');
                 const projectInfo = PROJECT_MAP[slot.projectId] || {};
-                const cardRoot = card.querySelector('.slot-card');
-                const projectTitleEl = card.querySelector('.data-project');
-                const monthBadge = card.querySelector('.data-month');
-                const dealerEl = card.querySelector('.data-dealer');
-                const locationEl = card.querySelector('.data-location');
-                const detailsEl = card.querySelector('.data-details');
-                const bookButton = card.querySelector('.book-button');
-                const accentColor = projectInfo.brandAccent || '#0E3B33';
+                const accent = (SELECTED_EXPERIENCE && SELECTED_EXPERIENCE.accent) || projectInfo.brandAccent || '#0E3B33';
 
-                cardRoot.style.borderTop = `4px solid ${accentColor}`;
-
-                projectTitleEl.textContent = projectInfo.title || slot.projectId || 'N/A';
-                projectTitleEl.style.color = accentColor;
-
-                const monthLabel = slot.monthLabel || formatMonthLabel(slot.month) || '執行月份待公布';
-                if (monthBadge) {
-                    monthBadge.textContent = monthLabel;
-                    monthBadge.style.backgroundColor = accentColor;
-                    monthBadge.style.boxShadow = `0 10px 20px -14px ${accentColor}99`;
+                const monthLabel = slot.monthLabel || formatFullMonth(slot.month) || '執行月份待公布';
+                if (monthEl) {
+                    monthEl.textContent = monthLabel;
+                }
+                if (detailEl) {
+                    detailEl.textContent = slot.details || projectInfo.summary || '詳情請參考任務說明。';
+                }
+                if (bookButton) {
+                    bookButton.style.backgroundColor = accent;
+                    bookButton.style.boxShadow = `0 10px 20px -12px ${accent}80`;
+                    bookButton.addEventListener('click', () => openModal(slot));
                 }
 
-                dealerEl.textContent = slot.dealer || '經銷商資訊待公布';
-                locationEl.textContent = slot.location || '';
-                detailsEl.textContent = slot.details || projectInfo.summary || '';
-
-                bookButton.style.backgroundColor = accentColor;
-                bookButton.style.boxShadow = `0 12px 24px -16px ${accentColor}80`;
-                bookButton.addEventListener('click', () => {
-                    openModal(slot);
-                });
-
-                slotsContainer.appendChild(card);
+                slotsContainer.appendChild(fragment);
             });
 
             slotsContainer.classList.remove('hidden');
@@ -1365,11 +2454,35 @@
                     slot => slot.slotID !== slotID
                 );
 
-                if (SELECTED_BRAND && SELECTED_PROJECT) {
-                    const remainingSlots = MOCK_SLOTS_DATA.slots.filter(slot => slot.brand === SELECTED_BRAND && slot.projectId === SELECTED_PROJECT.id);
-                    renderSlots(remainingSlots);
+                if (SELECTED_EXPERIENCE && SELECTED_BRAND) {
+                    const experienceKey = SELECTED_EXPERIENCE.key;
+                    const brandName = SELECTED_EXPERIENCE.brandName || SELECTED_BRAND;
+                    const projectId = SELECTED_EXPERIENCE.projectId;
+                    const remainingSlots = MOCK_SLOTS_DATA.slots.filter(slot => buildExperienceKey(brandName, projectId, slot.dealer, slot.location) === experienceKey);
+
+                    renderExperienceDetail(SELECTED_EXPERIENCE, remainingSlots);
+                    renderExperienceSlots(remainingSlots);
+                    updateExperienceHeader();
+
+                    const brandInfo = BRAND_DATA.find(brand => brand.name === brandName);
+                    if (brandInfo) {
+                        const brandSlots = getBrandSlots(brandName);
+                        renderBrandCards();
+                        if (SELECTED_BRAND === brandName) {
+                            renderBrandSummary(brandInfo, brandSlots);
+                            renderBrandAvailabilityList();
+                        }
+                    } else {
+                        renderBrandCards();
+                    }
+                } else if (SELECTED_BRAND) {
+                    renderBrandCards();
+                    renderBrandAvailabilityList();
+                } else {
+                    renderBrandCards();
                 }
 
+                renderRegionOverview();
                 refreshAdminDashboardIfVisible();
 
             }, 1500);
@@ -1420,21 +2533,79 @@
         function setupNavigation() {
             navLinkLoginPage.addEventListener('click', () => showPage('login'));
             navLinkRegisterPage.addEventListener('click', () => showPage('register'));
-            navLinkBrandHome.addEventListener('click', () => showBrandHome());
+            navLinkBrandHome.addEventListener('click', event => {
+                event.preventDefault();
+                SELECTED_BRAND = null;
+                SELECTED_EXPERIENCE = null;
+                showBrandHome();
+            });
             if (navLinkAdminDashboard) {
-                navLinkAdminDashboard.addEventListener('click', () => showAdminDashboard());
+                navLinkAdminDashboard.addEventListener('click', event => {
+                    event.preventDefault();
+                    showAdminDashboard();
+                });
             }
             logoutButton.addEventListener('click', handleLogout);
             loginBackButton.addEventListener('click', () => resetLoginForm({ preserveInputs: true }));
         }
 
+        function renderBreadcrumb(container, crumbs = []) {
+            if (!container) {
+                return;
+            }
+
+            container.innerHTML = '';
+
+            if (!Array.isArray(crumbs) || crumbs.length === 0) {
+                container.classList.add('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+
+            crumbs.forEach((crumb, index) => {
+                if (index > 0) {
+                    const separator = document.createElement('span');
+                    separator.className = 'text-gray-300';
+                    separator.textContent = '/';
+                    container.appendChild(separator);
+                }
+
+                const hasAction = typeof crumb.action === 'function';
+                let element;
+
+                if (hasAction) {
+                    element = document.createElement('button');
+                    element.type = 'button';
+                    let className = 'transition-colors text-emerald-600 hover:text-emerald-700';
+                    className += crumb.isCurrent ? ' font-semibold' : ' font-medium';
+                    element.className = className;
+                    element.addEventListener('click', crumb.action);
+                } else {
+                    element = document.createElement('span');
+                    element.className = crumb.isCurrent ? 'text-gray-700 font-semibold' : 'text-gray-500';
+                }
+
+                element.textContent = crumb.label || '';
+
+                if (crumb.isCurrent) {
+                    element.setAttribute('aria-current', 'page');
+                }
+
+                container.appendChild(element);
+            });
+        }
+
         // [新] 顯示指定頁面
         function showPage(pageName) {
+            if (pageName === 'admin' && (!CURRENT_USER.email || CURRENT_USER.role !== 'admin')) {
+                pageName = CURRENT_USER.email ? 'brand-home' : 'login';
+            }
             if ((pageName === 'brand-home' || pageName === 'booking') && !CURRENT_USER.email) {
                 pageName = 'login';
             }
 
-            if (pageName === 'booking' && CURRENT_USER.email && !SELECTED_PROJECT) {
+            if (pageName === 'booking' && CURRENT_USER.email && !SELECTED_EXPERIENCE) {
                 pageName = 'brand-home';
             }
 
@@ -1492,6 +2663,9 @@
                         navLinkAdminDashboard.classList.add('hidden');
                     }
                 }
+                if (navLinkBrandHome) {
+                    navLinkBrandHome.classList.remove('hidden');
+                }
             } else {
                 navLoggedOut.classList.remove('hidden');
                 navLoggedIn.classList.add('hidden');
@@ -1499,6 +2673,9 @@
                 welcomeMessage.textContent = '';
                 if (navLinkAdminDashboard) {
                     navLinkAdminDashboard.classList.add('hidden');
+                }
+                if (navLinkBrandHome) {
+                    navLinkBrandHome.classList.remove('hidden');
                 }
             }
         }
@@ -1552,6 +2729,9 @@
                 loadingContainer.classList.remove('hidden');
                 loadingContainer.classList.add('flex');
                 slotsContainer.classList.add('hidden');
+                if (slotsEmptyState) {
+                    slotsEmptyState.classList.add('hidden');
+                }
             } else {
                 loadingContainer.classList.add('hidden');
                 loadingContainer.classList.remove('flex');
@@ -1698,6 +2878,7 @@
             renderAdminBrandTable();
             renderAdminUpcomingSlots();
             renderAdminMonthlySummary();
+            renderAdminBrandDetail();
         }
 
         function renderAdminBrandTable() {
@@ -1710,17 +2891,28 @@
             let hasData = false;
             BRAND_DATA.forEach(brand => {
                 const projects = BRAND_PROJECTS[brand.name] || [];
-                const remainingSlots = (MOCK_SLOTS_DATA.slots || []).filter(slot => slot.brand === brand.name);
+                const remainingSlots = getBrandSlots(brand.name);
                 const nextSlot = getNextSlotForBrand(brand.name);
 
                 const row = document.createElement('tr');
-                row.className = 'border-b border-gray-100 last:border-0';
+                row.className = 'admin-brand-row border-b border-gray-100 last:border-0';
                 row.innerHTML = `
                     <td class="py-3 px-4 font-semibold text-gray-700">${brand.name}</td>
                     <td class="py-3 px-4 text-gray-600">${projects.length}</td>
                     <td class="py-3 px-4 text-gray-600">${remainingSlots.length}</td>
                     <td class="py-3 px-4 text-gray-600">${nextSlot || '尚未開放'}</td>
                 `;
+                row.tabIndex = 0;
+                row.addEventListener('click', () => openAdminBrandDetail(brand.name));
+                row.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        openAdminBrandDetail(brand.name);
+                    }
+                });
+                if (ADMIN_SELECTED_BRAND === brand.name) {
+                    row.classList.add('active');
+                }
                 adminBrandTableBody.appendChild(row);
                 hasData = true;
             });
@@ -1815,9 +3007,215 @@
             });
         }
 
+
+        function buildAdminBrandDetail(brandName) {
+            const brandInfo = BRAND_DATA.find(brand => brand.name === brandName);
+            if (!brandInfo) {
+                return null;
+            }
+
+            const initialSlots = INITIAL_SLOTS.filter(slot => slot.brand === brandName);
+            const remainingSlots = getBrandSlots(brandName);
+            const initialCount = initialSlots.length;
+            const remainingCount = remainingSlots.length;
+            const bookedCount = Math.max(initialCount - remainingCount, 0);
+            const utilization = initialCount > 0 ? Math.round((bookedCount / initialCount) * 100) : 0;
+            const nextSlot = getNextSlotForBrand(brandName);
+
+            const regionTotals = {};
+            remainingSlots.forEach(slot => {
+                const region = detectRegionFromSlot(slot);
+                regionTotals[region] = (regionTotals[region] || 0) + 1;
+            });
+            const regionStats = Object.entries(regionTotals)
+                .sort((a, b) => b[1] - a[1])
+                .map(([region, count]) => ({
+                    region: region === '未分類' ? '地區待確認' : region,
+                    remaining: count,
+                    share: remainingCount > 0 ? Math.round((count / remainingCount) * 100) : 0
+                }));
+
+            const dealerMap = new Map();
+            remainingSlots.forEach(slot => {
+                const key = slot.dealer || slot.location || slot.slotID;
+                if (!dealerMap.has(key)) {
+                    dealerMap.set(key, {
+                        dealer: slot.dealer || '經銷據點待確認',
+                        location: slot.location || '',
+                        region: detectRegionFromSlot(slot),
+                        slots: []
+                    });
+                }
+                dealerMap.get(key).slots.push(slot);
+            });
+            const dealerStats = Array.from(dealerMap.values())
+                .sort((a, b) => b.slots.length - a.slots.length)
+                .map(entry => {
+                    const initialKey = `${brandName}||${entry.dealer}`;
+                    const initial = INITIAL_SLOTS_BY_DEALER[initialKey] || entry.slots.length;
+                    const sorted = [...entry.slots].sort((a, b) => (a.month || '').localeCompare(b.month || ''));
+                    const next = sorted[0] ? formatFullMonth(sorted[0].month) : '尚未開放';
+                    return {
+                        dealer: entry.dealer,
+                        region: entry.region === '未分類' ? '地區待確認' : entry.region,
+                        remaining: entry.slots.length,
+                        initial,
+                        next
+                    };
+                });
+
+            const projects = (BRAND_PROJECTS[brandName] || []).map(project => {
+                const initial = INITIAL_SLOTS_BY_PROJECT[project.id] || 0;
+                const projectSlots = remainingSlots.filter(slot => slot.projectId === project.id);
+                const remaining = projectSlots.length;
+                const booked = Math.max(initial - remaining, 0);
+                const nextProjectSlot = [...projectSlots].sort((a, b) => (a.month || '').localeCompare(b.month || ''))[0];
+                return {
+                    id: project.id,
+                    title: project.title,
+                    category: project.category,
+                    remaining,
+                    initial,
+                    booked,
+                    next: nextProjectSlot ? formatFullMonth(nextProjectSlot.month) : '尚未開放',
+                    accent: project.brandAccent || brandInfo.accent || '#0E3B33'
+                };
+            });
+
+            return {
+                brandName,
+                description: brandInfo.description,
+                accent: brandInfo.accent || '#0E3B33',
+                remainingCount,
+                initialCount,
+                bookedCount,
+                utilization,
+                nextSlot,
+                regionStats,
+                dealerStats,
+                projects
+            };
+        }
+
+        function openAdminBrandDetail(brandName) {
+            ADMIN_SELECTED_BRAND = brandName;
+            renderAdminBrandDetail();
+            renderAdminBrandTable();
+            if (adminBrandDetailSection) {
+                adminBrandDetailSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function closeAdminBrandDetail() {
+            ADMIN_SELECTED_BRAND = null;
+            renderAdminBrandDetail();
+            renderAdminBrandTable();
+        }
+
+        function renderAdminBrandDetail() {
+            if (!adminBrandDetailSection) {
+                return;
+            }
+
+            if (!ADMIN_SELECTED_BRAND) {
+                adminBrandDetailSection.classList.add('hidden');
+                return;
+            }
+
+            const detail = buildAdminBrandDetail(ADMIN_SELECTED_BRAND);
+            if (!detail) {
+                adminBrandDetailSection.classList.add('hidden');
+                return;
+            }
+
+            adminBrandDetailSection.classList.remove('hidden');
+            if (adminBrandDetailCard) {
+                adminBrandDetailCard.style.borderTopColor = detail.accent;
+            }
+            if (adminBrandDetailBreadcrumb) {
+                adminBrandDetailBreadcrumb.textContent = `管理儀表板 / ${detail.brandName}`;
+            }
+            if (adminBrandDetailTitle) {
+                adminBrandDetailTitle.textContent = `${detail.brandName} 品牌詳情`;
+            }
+            if (adminBrandDetailDescription) {
+                adminBrandDetailDescription.textContent = detail.description || '目前尚無品牌描述。';
+            }
+            if (adminBrandDetailRemaining) {
+                adminBrandDetailRemaining.textContent = detail.remainingCount;
+            }
+            if (adminBrandDetailBooked) {
+                adminBrandDetailBooked.textContent = detail.bookedCount;
+            }
+            if (adminBrandDetailUtilization) {
+                adminBrandDetailUtilization.textContent = `${detail.utilization}%`;
+            }
+            if (adminBrandDetailNext) {
+                adminBrandDetailNext.textContent = detail.nextSlot || '尚未開放';
+            }
+
+            if (adminBrandDetailProjects) {
+                adminBrandDetailProjects.innerHTML = '';
+                if (!detail.projects.length) {
+                    adminBrandDetailProjectsEmpty && adminBrandDetailProjectsEmpty.classList.remove('hidden');
+                } else {
+                    adminBrandDetailProjectsEmpty && adminBrandDetailProjectsEmpty.classList.add('hidden');
+                    detail.projects.forEach(project => {
+                        const card = document.createElement('div');
+                        card.className = 'border border-gray-100 rounded-2xl p-4 shadow-sm';
+                        card.style.borderTop = `4px solid ${project.accent}`;
+                        card.innerHTML = `
+                            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">${project.category}</p>
+                            <h4 class="text-lg font-bold text-gray-900 mt-1">${project.title}</h4>
+                            <p class="text-sm text-gray-600 mt-2">剩餘 ${project.remaining} / 初始 ${project.initial}</p>
+                            <p class="text-xs text-gray-500 mt-1">已預約 ${project.booked} 件｜最近可預約：${project.next}</p>
+                        `;
+                        adminBrandDetailProjects.appendChild(card);
+                    });
+                }
+            }
+
+            if (adminBrandDetailRegionBody) {
+                adminBrandDetailRegionBody.innerHTML = '';
+                if (!detail.regionStats.length) {
+                    adminBrandDetailRegionEmpty && adminBrandDetailRegionEmpty.classList.remove('hidden');
+                } else {
+                    adminBrandDetailRegionEmpty && adminBrandDetailRegionEmpty.classList.add('hidden');
+                    detail.regionStats.forEach(stat => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="py-2 px-4 text-sm text-gray-700">${stat.region}</td>
+                            <td class="py-2 px-4 text-sm text-gray-600">${stat.remaining}</td>
+                            <td class="py-2 px-4 text-sm text-gray-600">${stat.share}%</td>
+                        `;
+                        adminBrandDetailRegionBody.appendChild(row);
+                    });
+                }
+            }
+
+            if (adminBrandDetailDealerBody) {
+                adminBrandDetailDealerBody.innerHTML = '';
+                if (!detail.dealerStats.length) {
+                    adminBrandDetailDealerEmpty && adminBrandDetailDealerEmpty.classList.remove('hidden');
+                } else {
+                    adminBrandDetailDealerEmpty && adminBrandDetailDealerEmpty.classList.add('hidden');
+                    detail.dealerStats.forEach(dealer => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="py-2 px-4 text-sm text-gray-700">${dealer.dealer}</td>
+                            <td class="py-2 px-4 text-sm text-gray-600">${dealer.region}</td>
+                            <td class="py-2 px-4 text-sm text-gray-600">${dealer.remaining} / ${dealer.initial}</td>
+                            <td class="py-2 px-4 text-sm text-gray-600">${dealer.next}</td>
+                        `;
+                        adminBrandDetailDealerBody.appendChild(row);
+                    });
+                }
+            }
+        }
         function refreshAdminDashboardIfVisible() {
             if (pageAdminDashboard && !pageAdminDashboard.classList.contains('hidden')) {
                 renderAdminDashboard();
+                renderAdminBrandDetail();
             }
         }
 
